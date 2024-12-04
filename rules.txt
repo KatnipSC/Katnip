@@ -1,0 +1,17 @@
+reporter:
+    - variable:$
+    - string:""
+    - number:
+
+script parents:
+    - hat:name(){}
+
+    - c:name(){}
+
+stack:name()
+
+cap:name()
+
+comment:#
+
+string:""

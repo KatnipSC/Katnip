@@ -1,0 +1,55 @@
+# useName:opCode:type:inputName1,inputName2, ...
+# type: [hat (top of stack), 
+#        reporter (fits inside parameters), 
+#        c (envelops code), 
+#        stack (block that fits into stack), 
+#        cap (ends stack)]
+
+# NOTE: all parameter names will be set to uppercase, so case does not matter
+
+# events
+whenFlagClicked:event_whenflagclicked:hat:
+whenSpriteClicked:event_whenthisspriteclicked:hat:
+
+# control
+forever:control_forever:c:
+repeat:control_repeat:c:i.times
+wait:control_wait:stack:i.duration
+if:control_if:c:i.condition
+stop:control_stop:stack:f.stop_option
+
+# motion
+edgeBounce:motion_ifonedgebounce:stack:
+move:motion_movesteps:stack:i.steps
+turn:motion_turnright:stack:i.degrees
+goto:motion_gotoxy:stack:i.x,i.y
+glide:motion_glidesecstoxy:stack:i.secs,i.x,i.y
+setx:motion_setx:stack:i.x
+sety:motion_sety:stack:i.y
+xPos:motion_xposition:reporter:
+yPos:motion_yposition:reporter:
+
+# looks
+think:looks_think:stack:i.message
+say:looks_say:stack:i.message
+show:looks_show:stack:
+hide:looks_hide:stack:
+
+# operators
+join:operator_join:reporter:i.string1,i.string2
+add:operator_add:reporter:i.num1,i.num2
+subtract:operator_subtract:reporter:i.num1,i.num2
+divide:operator_divide:reporter:i.num1,i.num2
+multiply:operator_multiply:reporter:i.num1,i.num2
+mod:operator_mod:reporter:i.num1,i.num2
+
+# sensing
+mouse:sensing_mousedown:reporter:
+
+# variables - f.variable: [variable_name, variable_id]
+set:data_setvariableto:stack:i.value,f.variable
+
+# pen
+penUp:pen_penUp:stack:
+penDown:pen_penDown:stack:
+penClear:pen_clear:stack:
