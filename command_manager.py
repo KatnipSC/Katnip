@@ -30,9 +30,10 @@ def read_by_opcode(opcode):
     return return_dict
 
 def read_by_name(name):
+    name = name.lower()
     found_commands = read_commands()
     attributes = ["name","opcode","type","inputs"]
-    command_found = [cmd.split(":") for cmd in found_commands if cmd.startswith(name)]
+    command_found = [cmd.split(":") for cmd in found_commands if cmd.split(":")[0].lower() == name]
 
     return_dict = {}
     for attribute, value in zip(attributes, command_found[0]):
@@ -40,4 +41,4 @@ def read_by_name(name):
 
     return return_dict
 
-print(read_by_opcode("motion_glidesecstoxy"))
+# print(read_by_opcode("motion_glidesecstoxy"))

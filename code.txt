@@ -1,2 +1,4 @@
 penClear()
 penClear()
+set($forb,xPos())
+stop("all")

@@ -6,6 +6,7 @@
 #        cap (ends stack)]
 
 # NOTE: all parameter names will be set to uppercase, so case does not matter
+# NOTE: commands are NOT case-sensitive. To change this, change command_manager and the way it matches the command name
 
 # events
 whenFlagClicked:event_whenflagclicked:hat:
@@ -47,7 +48,7 @@ mod:operator_mod:reporter:i.num1,i.num2
 mouse:sensing_mousedown:reporter:
 
 # variables - f.variable: [variable_name, variable_id]
-set:data_setvariableto:stack:i.value,f.variable
+set:data_setvariableto:stack:f.variable,i.value
 
 # pen
 penUp:pen_penUp:stack:

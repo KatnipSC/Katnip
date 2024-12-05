@@ -23,7 +23,15 @@ class project():
         self.origin = filename
         shutil.rmtree(tmpdir)
 
+    def _split_by_char(self, string, delimiter):
+        occurence = string.find(delimiter)
+        if occurence == -1:
+            return string
+        return string[:occurence], string[occurence+1:]
+
     def _is_num(self, value):
+        if len(value) == 0:
+            return False
         for character in value:
             if not character in ["-",".","0","1","2","3","4","5","6","7","8","9"]:
                 return False
@@ -68,12 +76,15 @@ class project():
 
             token_type = "c" if "{" in token_list else "func"
 
-            # Create details for the block
-            func_name = token_list.split("(")[0]
+            # Split string by first occurence of parentheses open (signifying arguments to follow)
+            split_token_list = self._split_by_char(token_list, "(")
 
-            if len(token_list.split("(")) > 1: # Potentially might have no arguments. Len 1 --> name, no arguments
+            # Create details for the block
+            func_name = split_token_list[0]
+
+            if len(split_token_list) > 1: # Potentially might have no arguments. Len 1 --> name, no arguments
                 # Parse the arguments
-                func_args = token_list.split("(")[1][:-1]
+                func_args = split_token_list[1][:-1]
                 func_args = self._simplify_args(func_args, line_num)
 
             # Create the block
@@ -89,6 +100,10 @@ class project():
             prev_block = new_block
 
     def _simplify_args(self, args, line_num):
+        # print(args)
+        if args == "": # No argument blocks
+            return []
+        
         args = args.split(",")
         return_args = [] # 2d list of arguments [type, relavent_data]
         invalid_args = []
@@ -103,13 +118,15 @@ class project():
                 return_args.append(["str/num", arg])
             elif "(" in arg and ")" in arg:
                 # Create a new stack block with its relavent data
-                func_name = arg.split("(")[0]
-                simplified_args = self._simplify_args(arg.split("(")[1][:-1], line_num)
+                func_pieces = self._split_by_char(arg, "(")
+                func_name = func_pieces[0]
+                simplified_args = self._simplify_args(func_pieces[1][:-1], line_num)
                 func = self._create_block(func_name, simplified_args)
+                self.target["blocks"][func[0]] = func[1]
 
                 return_args.append(["reporter", func]) # Return the block
             else:
-                print(f"❌ - Invalid argument type for argument [{arg}] on line [{line_num}]\n")
+                print(f"❌ - Invalid argument type for argument '{arg}' on line [{line_num+1}]\n")
                 invalid_args.append(arg)
 
         if invalid_args:
@@ -142,15 +159,38 @@ class project():
             block["parent"] = prev[0]
        
         fill_args = data["inputs"]
-        fill_args = fill_args.split(",")
+        fill_args = fill_args.split(",") if not fill_args == "" else []
+
+        # Define data setup types (not used, just for reference below)
+        types = {
+            "substack": [2,"id"],
+            "variable": [3,[12,"name","id"],[10,""]],
+            "str/num": [1, [10, "value"]],
+            "reporter": [3, "id", [10,""]]
+        }
+
+        # Check for correct number of arguments
+        if len(fill_args) != len(args):
+            raise ValueError(f"❌ - '{name}' expects [{len(fill_args)}] arguments but [{len(args)}] arguments were given.\n")
 
         # Input args
         for fill_arg, arg in zip(fill_args, args):
-            if fill_arg.startswith("i."):
-                block["inputs"][fill_arg[2:].upper()] = arg
+            # print(arg)
+            if fill_arg.startswith("i."): # UNFINISHED!!! ADD ALL THE OTHER TYPES
+                if arg[0] == "str/num":
+                    block["inputs"][fill_arg[2:].upper()] = [1, [10, arg[1]]]
+                elif arg[0] == "variable":
+                    block["inputs"][fill_arg[2:].upper()] = [3, [12, arg[1][0], arg[1][1]], [10, "❤️"]]
+                elif arg[0] == "reporter":
+                    self.target["blocks"][arg[1][0]]["parent"] = block_id
+                    block["inputs"][fill_arg[2:].upper()] = [3, arg[1][0], [10, "❤️"]]
             elif fill_arg.startswith("f."):
-                block["fields"][fill_arg[2:].upper()] = arg
+                if arg[0] == "str/num":
+                    block["fields"][fill_arg[2:].upper()] = [arg[1], None]
+                elif arg[0] == "variable":
+                    block["fields"][fill_arg[2:].upper()] = arg[1]
 
+        print(block_id, block)
         return block_id, block
     
     def write(self, filename):
