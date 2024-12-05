@@ -1,0 +1,14 @@
+whenFlagClicked(){
+    penClear()
+    set($dist, 1)
+
+    forever(){
+        turn($dist)
+        move($dist)
+
+        set($dist, $dist + 1)
+        if($dist > 12) {
+            stop("all")
+        }
+    }
+}

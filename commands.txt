@@ -12,10 +12,10 @@ whenFlagClicked:event_whenflagclicked:hat:
 whenSpriteClicked:event_whenthisspriteclicked:hat:
 
 # control
-forever:control_forever:c:
-repeat:control_repeat:c:i.times
+forever:control_forever:c:i.substack
+repeat:control_repeat:c:i.times,i.substack
 wait:control_wait:stack:i.duration
-if:control_if:c:i.condition
+if:control_if:c:i.condition,i.substack
 stop:control_stop:stack:f.stop_option
 
 # motion

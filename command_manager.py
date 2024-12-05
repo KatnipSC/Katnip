@@ -10,7 +10,7 @@ def read_commands():
         for command in commands:
             if command.startswith("#") or command == "\n": # Ignore commented lines
                     continue
-            
+           
             command = command.strip() # Remove leading and trailing whitespaces
             found_commands.append(command)
 
@@ -22,6 +22,17 @@ def read_by_opcode(opcode):
     found_commands = read_commands()
     attributes = ["name","opcode","type","inputs"]
     command_found = [cmd.split(":") for cmd in found_commands if cmd.split(":")[1] == opcode]
+
+    return_dict = {}
+    for attribute, value in zip(attributes, command_found[0]):
+          return_dict[attribute] = value
+
+    return return_dict
+
+def read_by_name(name):
+    found_commands = read_commands()
+    attributes = ["name","opcode","type","inputs"]
+    command_found = [cmd.split(":") for cmd in found_commands if cmd.startswith(name)]
 
     return_dict = {}
     for attribute, value in zip(attributes, command_found[0]):

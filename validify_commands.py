@@ -3,6 +3,8 @@ Code for validating the commands (ensuring proper formatting and syntax)
 """
 
 def validify_commands():
+    print(f"🔍 - Validating commands...")
+
     with open("commands.txt", "r") as f:
         commands = f.readlines() # Read file
 
