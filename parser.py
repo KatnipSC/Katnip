@@ -172,7 +172,7 @@ class project():
 
             if prev_block:
                 prev_block[1]["next"] = new_block[0] # Update the previous block's "next" attribute
-            else:
+            elif not substack:
                 new_block[1]["topLevel"] = True # Update the current block's "topLevel" attribute to be top-level if it has no parents
 
             # Save the block, and update the previous block
