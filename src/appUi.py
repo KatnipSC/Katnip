@@ -7,7 +7,17 @@ import subprocess
 import os
 import time     
 
-def open_sb3_TW(sb3_file_path):
+def open_sb3_TW(sb3_file_path: str):
+    """
+    Opens up the SB3 project supplied using turbowarp editor
+
+    Parameters:
+    - sb3_file_path (str): The path to open
+
+    Returns:
+    - out (subprocess.Popen): The subprocess object
+    """
+    
     # Update path according to location of TurboWarp.exe
     turbowarp_executable_path = get_key("Program")
     if not os.path.isfile(turbowarp_executable_path):
@@ -20,6 +30,7 @@ def open_sb3_TW(sb3_file_path):
     turbowarp_process = subprocess.Popen([turbowarp_executable_path, sb3_file_path])
 
     # Allow some time for the window to open
+
     #time.sleep(2)
 
     # # Use PowerShell to arrange windows

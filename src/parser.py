@@ -24,7 +24,19 @@ class project():
         self.origin = filename
         shutil.rmtree(tmpdir)
     
-    def _extract(self, string):
+    def _extract(self, string: str):
+        """
+        Extracts name and arguments from a string (a line containing a function).
+
+        Parameters:
+        - string (str): The string of the line containing the relavent function
+
+        Returns:
+        - pieces (dict): A dictionary containing the name and arguments of the function
+            - ["name"] (str): The name of the function
+            - ["args"] (list): A list of arguments for the function
+        """
+
         pieces = {}
         pieces["name"] = string.split("(")[0]
 
@@ -53,7 +65,17 @@ class project():
         pieces["args"] = [arg for arg in args if arg]
         return pieces
 
-    def _is_num(self, value):
+    def _is_num(self, value: str):
+        """
+        Checks if a given value is a valid number. (only allows characters in "-.0123456789")
+
+        Parameters:
+        - value (str): The value to check
+
+        Returns:
+        - bool: True if the value is a valid number, False otherwise
+        """
+
         if len(value) == 0:
             return False
         for character in value:
@@ -62,18 +84,46 @@ class project():
         return True
 
     def _generate_id(self, arg=None):
+        """
+        Generates a unique ID. This can be for anything needing an ID.
+
+        Parameters:
+        - arg (str | None): optional, is added to the unique ID's name to denote certain aspects.
+            (e.g. "var" or "broadcast", etc.)
+
+        Returns:
+        - str: The unique ID
+        """
+
         self.CUR_ID += 1
         if arg:
             return f"scratchtext-{arg}-{self.CUR_ID}"
         else:
             return f"scratchtext-{self.CUR_ID}"
        
-    def _read_variable(self, name):
+    def _read_variable(self, name: str):
+        """
+        Returns the id of a variable. Creates the variable if it does not exist.
+
+        Parameters:
+        - name (str): The name of the variable
+
+        Returns:
+        - str: The id of the variable
+        """
+
         if not name in self.variables:
             self.variables[name] = self._generate_id(arg="var")
         return self.variables[name]
     
-    def add_sprite_scripts(self, target, program):
+    def add_sprite_scripts(self, target: str, program: str):
+        """
+        Adds sprite scripts to the specified target, parsing through program.
+
+        Parameters:
+        - target (str): The name of the target (e.g. "S1" or "Sprite1")
+        - program (str | list): The program to parse and add to the target
+        """
         if isinstance(program, str):
             program = program.replace(" ","").split("\n")
 
@@ -92,7 +142,19 @@ class project():
                     variable_id = self.variables[variable]
                     target["variables"][variable_id] = [variable, "0"]
        
-    def _parse(self, lines, substack=False):
+    def _parse(self, lines: list, substack=False):
+        """
+        Parses the given lines and adds them to self.target (current target)
+            Will return a string ID of the topmost block if it is a substack for provessing substacks
+
+        Parameters:
+        - lines (list): The list of lines to parse
+        - substack (bool): Whether this is a substack (used for parsing nested c blocks)
+
+        Returns:
+        - top_id (str | None): The ID of the topmost block [IF] it is a substack for processing substacks
+        """
+
         print(lines)
         prev_block = []
         line_num = 0 # We are using a while loop with counter instead of for loop to account for c blocks with blocks inside "substack"
@@ -187,9 +249,23 @@ class project():
         if substack:
             return top_id # Return the top block of the substack
 
-    def _simplify_args(self, args, line_num):
+    def _simplify_args(self, args: list | str, line_num: int):
+        """
+        Simplifies the arguments, parsing through recursively.
+
+        Parameters:
+        - args (list | str): The list of arguments to simplify
+        - line_num (int): The line number for error handling
+
+        Returns:
+        - return_args (list): The simplified list of arguments (2D array)
+            List of [type, relavent_data] for each argument
+        """
+
         if args == "": # No argument blocks
             return []
+        if isinstance(args, str):
+            args = [args]
         
         args = [arg for arg in args if not arg == ""]
         return_args = [] # 2d list of arguments [type, relavent_data]
@@ -217,6 +293,27 @@ class project():
         return return_args
 
     def _create_block(self, name, args, prev=None):
+        """
+        Creates a new block given its name and arguments
+
+        Parameters:
+        - name (str): The name of the block
+        - args (list): The arguments for the block
+        - prev (list): The previous block (if any)
+        
+        Returns:
+        - block_id (str): The ID of the block
+        - block (dict): The created block
+            - ["opcode"]: The opcode of the block
+            - ["parent"]: The ID of the parent block
+            - ["next"]: The ID of the next block
+            - ["inputs"]: The inputs for the block
+            - ["fields"]: The fields for the block
+            - ["shadow"]: A boolean indicating if the block is a shadow block
+            - ["topLevel"]: A boolean indicating if the block is top-level
+            - ["x"]: The x-coordinate of the block
+            - ["y"]: The y-coordinate of the block
+        """
         # Create a new ID for the block
         block_id = self._generate_id()
 
@@ -282,6 +379,12 @@ class project():
         return block_id, block
     
     def write(self, filename):
+        """
+        Writes the current project data to a file. Creates the SB3 file
+
+        Parameters:
+        - filename (str): The name of the SB3 file to write to
+        """
         # Load old contents
         tmpdir = tempfile.mkdtemp()
         with zipfile.ZipFile(self.origin, "r") as zip_ref:
