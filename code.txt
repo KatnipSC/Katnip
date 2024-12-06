@@ -1,4 +1,11 @@
-penClear()
-penClear()
-set($forb,xPos())
-stop("all")
+whenFlag() {
+    penClear()
+    penClear()
+    forever() {
+        move($forb)
+        set($forb,join(xPos(),yPos()))
+        if(mouse()) {
+            stop("all")
+        }
+    }
+}

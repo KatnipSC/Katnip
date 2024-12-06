@@ -9,14 +9,14 @@
 # NOTE: commands are NOT case-sensitive. To change this, change command_manager and the way it matches the command name
 
 # events
-whenFlagClicked:event_whenflagclicked:hat:
+whenFlag:event_whenflagclicked:hat:
 whenSpriteClicked:event_whenthisspriteclicked:hat:
 
 # control
 forever:control_forever:c:i.substack
 repeat:control_repeat:c:i.times,i.substack
 wait:control_wait:stack:i.duration
-if:control_if:c:i.condition,i.substack
+if:control_if:c:i.condition[bool],i.substack
 stop:control_stop:stack:f.stop_option
 
 # motion

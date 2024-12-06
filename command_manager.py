@@ -35,6 +35,9 @@ def read_by_name(name):
     attributes = ["name","opcode","type","inputs"]
     command_found = [cmd.split(":") for cmd in found_commands if cmd.split(":")[0].lower() == name]
 
+    if not command_found:
+         return None
+
     return_dict = {}
     for attribute, value in zip(attributes, command_found[0]):
           return_dict[attribute] = value
