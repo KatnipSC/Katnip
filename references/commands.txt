@@ -8,49 +8,151 @@
 # NOTE: all parameter names will be set to uppercase, so case does not matter
 # NOTE: commands are NOT case-sensitive. To change this, change command_manager and the way it matches the command name
 
-# events
-whenFlag:event_whenflagclicked:hat:
-whenSpriteClicked:event_whenthisspriteclicked:hat:
 
-# control
-forever:control_forever:c:i.substack
-repeat:control_repeat:c:i.times,i.substack
-wait:control_wait:stack:i.duration
-if:control_if:c:i.condition[bool],i.substack
-stop:control_stop:stack:f.stop_option
-
-# motion
-edgeBounce:motion_ifonedgebounce:stack:
+# motion - all blocks implemented
 move:motion_movesteps:stack:i.steps
 turn:motion_turnright:stack:i.degrees
 goto:motion_gotoxy:stack:i.x,i.y
-glide:motion_glidesecstoxy:stack:i.secs,i.x,i.y
+glideXY:motion_glidesecstoxy:stack:i.secs,i.x,i.y
+point:motion_pointindirection:stack:i.direction
+changex:motion_changexby:stack:i.dx
 setx:motion_setx:stack:i.x
+changey:motion_changeyby:stack:i.dy
 sety:motion_sety:stack:i.y
+edgeBounce:motion_ifonedgebounce:stack:
+rotationstyle:motion_setrotationstyle:stack:f.style
 xPos:motion_xposition:reporter:
 yPos:motion_yposition:reporter:
+direction:motion_direction:reporter:
 
-# looks
-think:looks_think:stack:i.message
+# looks - all blocks implemented
+# NOTE: ideally changelayer would have a default "forward" and then to go backwards just use negitive numbers
+timesay:looks_sayforsecs:stack:i.message,i.secs
 say:looks_say:stack:i.message
+timethink:looks_thinkforsecs:stack:i.message,i.secs
+think:looks_think:stack:i.message
+switchcostume:looks_switchcostumeto:stack:i.costume
+nextcostume:looks_nextcostume:stack:
+switchcostume:looks_switchbackdropto:stack:i.costume
+nextcostume:looks_nextbackdrop:stack:
+changesize:looks_changesizeby:stack:i.change
+setsize:looks_setsizeto:stack:i.size
+changefx:looks_changeeffectby:stack:f.effect,i.change
+setfx:looks_seteffectto:stack:f.effect,i.change
+clearfx:looks_cleargraphiceffects:stack:
 show:looks_show:stack:
 hide:looks_hide:stack:
+gotolayer:looks_gotofrontback:stack:f.front_back
+changelayer:looks_goforwardbackwardlayers:f.forward_backward,num
+getcostume:looks_costumenumbername:reporter:f.number_name
+getbackdrop:looks_backdropnumbername:reporter:f.number_name
+size:looks_size:reporter:
 
-# operators
-join:operator_join:reporter:i.string1,i.string2
+# Sound - all blocks implemented
+play:sound_play:stack:i.sound_menu
+playwait:sound_playuntildone:stack:i.sound_menu
+stopsounds:sound_stopallsounds:stack:
+changesoundfx:sound_changeeffectby:stack:i.effect,i.value
+setsoundfx:sound_seteffectto:stack:i.effect,i.value
+clearsoundfx:sound_cleareffects:stack:
+changevolume:sound_changevolumeby:stack:i.volume
+setvolume:sound_setvolumeto:stack:i.volume
+volume:sound_volume:reporter:
+
+# events - all blocks implemented
+whenFlag:event_whenflagclicked:hat:
+whenKey:event_whenkeypressed:hat:f.key_option
+whenSpriteClicked:event_whenthisspriteclicked:hat:
+whenBackdropSwitch:event_whenbackdropswitchesto:hat:f.backdrop
+whenGreater:event_whengreaterthan:hat:f.whengreaterthanmenu,i.value
+whenBroadcast:event_whenbroadcastreceived:hat:f.broadcast_option
+sendBroadcast:event_broadcast:stack:i.broadcast_input
+sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input
+
+# control - all blocks implemented
+# NOTE: if-else needs some attention. not sure that the command will parse well with the current set up
+wait:control_wait:stack:i.duration
+repeat:control_repeat:c:i.times,i.substack
+forever:control_forever:c:i.substack
+if:control_if:c:i.condition[bool],i.substack
+ifElse:control_if_else:c:i.condition[bool],i.substack,i.substack2
+waitUntil:control_wait_until:stack:i.condition[bool]
+repeatUntil:control_repeat_until:c:i.condition[bool],i.substack
+stop:control_stop:cap:f.stop_option
+whenCloneStart:control_start_as_clone:hat:
+createClone:control_create_clone_of:stack:i.clone_option
+deleteClone:control_delete_this_clone:cap:
+
+# sensing - all blocks implemented
+touching:sensing_touchingobject:reporter:i.touchingobjectmenu
+touchingClr:sensing_touchingcolor:reporter:i.color
+clrTouchingClr:sensing_coloristouchingcolor:reporter:i.color,i.color2
+distanceto:sensing_distanceto:reporter:i.distancetomenu
+ask:sensing_askandwait:stack:i.question
+answer:sensing_answer:reporter:
+keypressed:sensing_keypressed:reporter:i.key_option
+mouse:sensing_mousedown:reporter:
+mouseX:sensing_mousex:reporter:
+mouseY:sensing_mousey:reporter:
+setdragmode:sensing_setdragmode:stack:f.drag_mode
+loudness:sensing_loudness:reporter:
+timer:sensing_timer:reporter:
+resetTime:sensing_resettimer:stack:
+getAttribute:sensing_of:reporter:f.property,i.object
+current:sensing_current:reporter:f.currentmenu
+dayssince2000:sensing_dayssince2000:reporter:
+username:sensing_username:reporter:
+
+# operators - all blocks implemented
+# NOTE: Eventually making these operations standalone:
+#    + - * / mod < > == or and
 add:operator_add:reporter:i.num1,i.num2
 subtract:operator_subtract:reporter:i.num1,i.num2
-divide:operator_divide:reporter:i.num1,i.num2
 multiply:operator_multiply:reporter:i.num1,i.num2
+divide:operator_divide:reporter:i.num1,i.num2
+random:operator_random:reporter:i.from,i.to
+lt:operator_lt:reporter:i.operand1,i.operand2
+equals:operator_equals:reporter:i.operand1,i.operand2
+gt:operator_gt:reporter:i.operand1,i.operand2
+and:operator_and:reporter:i.operand1[bool],i.operand2[bool]
+or:operator_or:reporter:i.operand1[bool],i.operand2[bool]
+not:operator_not:reporter:i.operand[bool]
+join:operator_join:reporter:i.string1,i.string2
+getLetter:operator_letter_of:reporter:i.letter,i.string
+length:operator_length:reporter:i.string
+contains:operator_contains:reporter:i.string1,i.string2
 mod:operator_mod:reporter:i.num1,i.num2
+round:operator_round:reporter:i.num
+mathop:operator_mathop:reporter:f.operator,i.num
 
-# sensing
-mouse:sensing_mousedown:reporter:
+# variables - all blocks implemented
+# NOTE: potentially using = instead of setvar?
+setvar:data_setvariableto:stack:f.variable,i.value
+changevar:data_changevariableby:stack:f.variable,i.value
+showvar:data_showvariable:stack:f.variable
+hidevar:data_hidevariable:stack:f.variable
 
-# variables - f.variable: [variable_name, variable_id]
-set:data_setvariableto:stack:f.variable,i.value
+# lists - all blocks implemented
+# NOTE: potentially using @ to denote list just like variables use $
+listAdd:data_addtolist:stack:i.item,f.list
+listDelete:data_deleteoflist:stack:i.index,f.list
+listDeleteAll:data_deletealloflist:stack:f.list
+listInsert:data_insertatlist:stack:stack:i.item,i.index,f.list
+listReplace:data_replaceitemoflist:stack:i.index,f.list,i.item
+getItem:data_itemoflist:reporter:i.index,f.list
+getItemNum:data_itemnumoflist:reporter:i.item,f.list
+listLength:data_lengthoflist:reporter:f.list
+listContains:data_listcontainsitem:reporter:f.list,i.item
+listShow:data_showlist:stack:f.list
+listHide:data_hidelist:stack:f.list
 
-# pen
-penUp:pen_penUp:stack:
-penDown:pen_penDown:stack:
+# pen - all blocks implemented
+# NOTE: Left out the set pen color to (color) because it is redundant, as it can be handled using the setPen with color_param set to "color"
 penClear:pen_clear:stack:
+stamp:pen_stamp:stack:
+penDown:pen_penDown:stack:
+penUp:pen_penUp:stack:
+changePen:pen_changePenColorParamBy:stack:i.color_param,i.value
+setPen:pen_changePenColorParamBy:stack:i.color_param,i.value
+changePenSize:pen_changePenSizeBy:stack:i.size
+setPenSize:pen_setPenSizeTo:stack:i.size
