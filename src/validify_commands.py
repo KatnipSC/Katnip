@@ -51,6 +51,7 @@ def validify_commands():
 
             # Check if useName, opCode, and type are unique
             if command_parts[0] in all_names:
+                print(command_parts[0])
                 error_handler.add_error(f"Duplicate useName found. ", command, line_num)
                 continue
             if command_parts[1] in all_opcodes:

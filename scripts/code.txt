@@ -3,7 +3,7 @@ whenFlag() {
     penClear()
     forever() {
         move($forb)
-        set($forb,join(xPos(),yPos()))
+        setvar($forb,join(xPos(),yPos()))
         if(mouse()) {
             stop("all")
         }

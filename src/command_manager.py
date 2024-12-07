@@ -16,9 +16,11 @@ def read_commands() -> list[str]:
 
         for command in commands:
             if command.startswith("#") or command == "\n": # Ignore commented lines
-                    continue
-           
+                continue
+            
             command = command.strip() # Remove leading and trailing whitespaces
+            if "{" in command: # Ignore the metadata for the command. This is primarily for future hinting when writing code
+                command = command.split("{")[0] + command.split("}")[1]
             found_commands.append(command)
 
         f.close()

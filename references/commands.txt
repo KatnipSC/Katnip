@@ -15,59 +15,59 @@ turn:motion_turnright:stack:i.degrees
 goto:motion_gotoxy:stack:i.x,i.y
 glideXY:motion_glidesecstoxy:stack:i.secs,i.x,i.y
 point:motion_pointindirection:stack:i.direction
-changex:motion_changexby:stack:i.dx
-setx:motion_setx:stack:i.x
-changey:motion_changeyby:stack:i.dy
-sety:motion_sety:stack:i.y
+changeX:motion_changexby:stack:i.dx
+setX:motion_setx:stack:i.x
+changeY:motion_changeyby:stack:i.dy
+setY:motion_sety:stack:i.y
 edgeBounce:motion_ifonedgebounce:stack:
-rotationstyle:motion_setrotationstyle:stack:f.style
+rotationStyle:motion_setrotationstyle:stack:f.style{left-right;don't rotate;all around}
 xPos:motion_xposition:reporter:
 yPos:motion_yposition:reporter:
 direction:motion_direction:reporter:
 
 # looks - all blocks implemented
 # NOTE: ideally changelayer would have a default "forward" and then to go backwards just use negitive numbers
-timesay:looks_sayforsecs:stack:i.message,i.secs
+timeSay:looks_sayforsecs:stack:i.message,i.secs
 say:looks_say:stack:i.message
-timethink:looks_thinkforsecs:stack:i.message,i.secs
+timeThink:looks_thinkforsecs:stack:i.message,i.secs
 think:looks_think:stack:i.message
-switchcostume:looks_switchcostumeto:stack:i.costume
-nextcostume:looks_nextcostume:stack:
-switchcostume:looks_switchbackdropto:stack:i.costume
-nextcostume:looks_nextbackdrop:stack:
-changesize:looks_changesizeby:stack:i.change
-setsize:looks_setsizeto:stack:i.size
-changefx:looks_changeeffectby:stack:f.effect,i.change
-setfx:looks_seteffectto:stack:f.effect,i.change
-clearfx:looks_cleargraphiceffects:stack:
+switchCostume:looks_switchcostumeto:stack:i.costume
+nextCostume:looks_nextcostume:stack:
+switchBackdrop:looks_switchbackdropto:stack:i.costume
+nextBackdrop:looks_nextbackdrop:stack:
+changeSize:looks_changesizeby:stack:i.change
+setSize:looks_setsizeto:stack:i.size
+changeFx:looks_changeeffectby:stack:f.effect{color;fisheye;whirl;pixelate;mosaic;brightness;ghost},i.change
+setFx:looks_seteffectto:stack:f.effect{color;fisheye;whirl;pixelate;mosaic;brightness;ghost},i.change
+clearFx:looks_cleargraphiceffects:stack:
 show:looks_show:stack:
 hide:looks_hide:stack:
-gotolayer:looks_gotofrontback:stack:f.front_back
-changelayer:looks_goforwardbackwardlayers:f.forward_backward,num
-getcostume:looks_costumenumbername:reporter:f.number_name
-getbackdrop:looks_backdropnumbername:reporter:f.number_name
+goToLayer:looks_gotofrontback:stack:f.front_back{front;back}
+changeLayer:looks_goforwardbackwardlayers:stack:f.forward_backward{front;back},num
+getCostume:looks_costumenumbername:reporter:f.number_name{number;name}
+getBackdrop:looks_backdropnumbername:reporter:f.number_name{number;name}
 size:looks_size:reporter:
 
 # Sound - all blocks implemented
 play:sound_play:stack:i.sound_menu
-playwait:sound_playuntildone:stack:i.sound_menu
-stopsounds:sound_stopallsounds:stack:
-changesoundfx:sound_changeeffectby:stack:i.effect,i.value
-setsoundfx:sound_seteffectto:stack:i.effect,i.value
-clearsoundfx:sound_cleareffects:stack:
-changevolume:sound_changevolumeby:stack:i.volume
-setvolume:sound_setvolumeto:stack:i.volume
+playWait:sound_playuntildone:stack:i.sound_menu
+stopSounds:sound_stopallsounds:stack:
+changeSoundFx:sound_changeeffectby:stack:i.effect{pitch;pan left/right},i.value
+setSoundFx:sound_seteffectto:stack:i.effect{pitch;pan left/right},i.value
+clearSoundFx:sound_cleareffects:stack:
+changeVolume:sound_changevolumeby:stack:i.volume
+setVolume:sound_setvolumeto:stack:i.volume
 volume:sound_volume:reporter:
 
 # events - all blocks implemented
 whenFlag:event_whenflagclicked:hat:
-whenKey:event_whenkeypressed:hat:f.key_option
+whenKey:event_whenkeypressed:hat:f.key_option{...}
 whenSpriteClicked:event_whenthisspriteclicked:hat:
-whenBackdropSwitch:event_whenbackdropswitchesto:hat:f.backdrop
-whenGreater:event_whengreaterthan:hat:f.whengreaterthanmenu,i.value
-whenBroadcast:event_whenbroadcastreceived:hat:f.broadcast_option
-sendBroadcast:event_broadcast:stack:i.broadcast_input
-sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input
+whenBackdropSwitch:event_whenbackdropswitchesto:hat:f.backdrop{backdrop1;...}
+whenGreater:event_whengreaterthan:hat:f.whengreaterthanmenu{loudness,timer},i.value
+whenBroadcast:event_whenbroadcastreceived:hat:f.broadcast_option{...}
+sendBroadcast:event_broadcast:stack:i.broadcast_input{...}
+sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input{...}
 
 # control - all blocks implemented
 # NOTE: if-else needs some attention. not sure that the command will parse well with the current set up
@@ -78,28 +78,28 @@ if:control_if:c:i.condition[bool],i.substack
 ifElse:control_if_else:c:i.condition[bool],i.substack,i.substack2
 waitUntil:control_wait_until:stack:i.condition[bool]
 repeatUntil:control_repeat_until:c:i.condition[bool],i.substack
-stop:control_stop:cap:f.stop_option
+stop:control_stop:cap:f.stop_option{all;this script;other scripts in sprite}
 whenCloneStart:control_start_as_clone:hat:
-createClone:control_create_clone_of:stack:i.clone_option
+createClone:control_create_clone_of:stack:i.clone_option{myself;...}
 deleteClone:control_delete_this_clone:cap:
 
 # sensing - all blocks implemented
-touching:sensing_touchingobject:reporter:i.touchingobjectmenu
+touching:sensing_touchingobject:reporter:i.touchingobjectmenu{mouse-pointer;edge;...}
 touchingClr:sensing_touchingcolor:reporter:i.color
 clrTouchingClr:sensing_coloristouchingcolor:reporter:i.color,i.color2
-distanceto:sensing_distanceto:reporter:i.distancetomenu
+distanceto:sensing_distanceto:reporter:i.distancetomenu{mouse-pointer;...}
 ask:sensing_askandwait:stack:i.question
 answer:sensing_answer:reporter:
-keypressed:sensing_keypressed:reporter:i.key_option
+keypressed:sensing_keypressed:reporter:i.key_option{...}
 mouse:sensing_mousedown:reporter:
 mouseX:sensing_mousex:reporter:
 mouseY:sensing_mousey:reporter:
-setdragmode:sensing_setdragmode:stack:f.drag_mode
+setdragmode:sensing_setdragmode:stack:f.drag_mode{draggable;not draggable}
 loudness:sensing_loudness:reporter:
 timer:sensing_timer:reporter:
 resetTime:sensing_resettimer:stack:
-getAttribute:sensing_of:reporter:f.property,i.object
-current:sensing_current:reporter:f.currentmenu
+getAttribute:sensing_of:reporter:f.property{x position;y position;direction;costume #;costume name;size;volume},i.object{...}
+current:sensing_current:reporter:f.currentmenu{year;month;date;day of week;hour;minute;second}
 dayssince2000:sensing_dayssince2000:reporter:
 username:sensing_username:reporter:
 
@@ -123,14 +123,14 @@ length:operator_length:reporter:i.string
 contains:operator_contains:reporter:i.string1,i.string2
 mod:operator_mod:reporter:i.num1,i.num2
 round:operator_round:reporter:i.num
-mathop:operator_mathop:reporter:f.operator,i.num
+mathop:operator_mathop:reporter:f.operator{abs;floor;ceiling;sqrt;sin;cos;tan;asin;acos;atan;ln;log;e^;10^},i.num
 
 # variables - all blocks implemented
 # NOTE: potentially using = instead of setvar?
-setvar:data_setvariableto:stack:f.variable,i.value
-changevar:data_changevariableby:stack:f.variable,i.value
-showvar:data_showvariable:stack:f.variable
-hidevar:data_hidevariable:stack:f.variable
+setvar:data_setvariableto:stack:f.variable{...},i.value
+changevar:data_changevariableby:stack:f.variable{...},i.value
+showvar:data_showvariable:stack:f.variable{...}
+hidevar:data_hidevariable:stack:f.variable{...}
 
 # lists - all blocks implemented
 # NOTE: potentially using @ to denote list just like variables use $
@@ -152,7 +152,7 @@ penClear:pen_clear:stack:
 stamp:pen_stamp:stack:
 penDown:pen_penDown:stack:
 penUp:pen_penUp:stack:
-changePen:pen_changePenColorParamBy:stack:i.color_param,i.value
-setPen:pen_changePenColorParamBy:stack:i.color_param,i.value
+changePen:pen_changePenColorParamBy:stack:i.color_param{color;saturation;brightness;transparency},i.value
+setPen:pen_setPenColorParamTo:stack:i.color_param{color;saturation;brightness;transparency},i.value
 changePenSize:pen_changePenSizeBy:stack:i.size
 setPenSize:pen_setPenSizeTo:stack:i.size
