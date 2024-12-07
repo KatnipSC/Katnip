@@ -67,4 +67,4 @@ def validify_commands():
         error_handler.throw_errors()
         print("✅ - All commands are valid.")
         
-validify_commands()
+# validify_commands()

@@ -1,14 +1,14 @@
-whenFlagClicked(){
-    penClear()
-    set($dist, 1)
-
-    forever(){
-        turn($dist)
-        move($dist)
-
-        set($dist, $dist + 1)
-        if($dist > 12) {
-            stop("all")
-        }
+whenflag(){
+    setsize(5)
+    gotoxy(0,0)
+    penclear()
+    pendown()
+    setpen("color",50)
+    point(90)
+    setvar($steps,0)
+    repeatUntil(touching("_edge_")){
+        changevar($steps,1)
+        move($steps)
+        turn(subtract(360,$steps))
     }
 }

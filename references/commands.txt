@@ -12,9 +12,12 @@
 # motion - all blocks implemented
 move:motion_movesteps:stack:i.steps
 turn:motion_turnright:stack:i.degrees
-goto:motion_gotoxy:stack:i.x,i.y
+gotoXY:motion_gotoxy:stack:i.x,i.y
+goto:motion_goto:stack:i.to(motion_goto_menu;f.to)
 glideXY:motion_glidesecstoxy:stack:i.secs,i.x,i.y
+glideto:motion_glideto:stack:i.to(motion_glideto_menu;f.to)
 point:motion_pointindirection:stack:i.direction
+pointTo:motion_pointtowards:stack:i.towards(motion_pointtowards_menu;f.towards)
 changeX:motion_changexby:stack:i.dx
 setX:motion_setx:stack:i.x
 changeY:motion_changeyby:stack:i.dy
@@ -31,9 +34,9 @@ timeSay:looks_sayforsecs:stack:i.message,i.secs
 say:looks_say:stack:i.message
 timeThink:looks_thinkforsecs:stack:i.message,i.secs
 think:looks_think:stack:i.message
-switchCostume:looks_switchcostumeto:stack:i.costume
+switchCostume:looks_switchcostumeto:stack:i.costume(looks_costume;f.costume)
 nextCostume:looks_nextcostume:stack:
-switchBackdrop:looks_switchbackdropto:stack:i.costume
+switchBackdrop:looks_switchbackdropto:stack:i.costume(looks_backdrops;f.backdrop)
 nextBackdrop:looks_nextbackdrop:stack:
 changeSize:looks_changesizeby:stack:i.change
 setSize:looks_setsizeto:stack:i.size
@@ -49,8 +52,8 @@ getBackdrop:looks_backdropnumbername:reporter:f.number_name{number;name}
 size:looks_size:reporter:
 
 # Sound - all blocks implemented
-play:sound_play:stack:i.sound_menu
-playWait:sound_playuntildone:stack:i.sound_menu
+play:sound_play:stack:i.sound_menu(sounds_sounds_menu;f.sound_menu)
+playWait:sound_playuntildone:stack:i.sound_menu(sounds_sounds_menu;f.sound_menu)
 stopSounds:sound_stopallsounds:stack:
 changeSoundFx:sound_changeeffectby:stack:i.effect{pitch;pan left/right},i.value
 setSoundFx:sound_seteffectto:stack:i.effect{pitch;pan left/right},i.value
@@ -66,8 +69,8 @@ whenSpriteClicked:event_whenthisspriteclicked:hat:
 whenBackdropSwitch:event_whenbackdropswitchesto:hat:f.backdrop{backdrop1;...}
 whenGreater:event_whengreaterthan:hat:f.whengreaterthanmenu{loudness,timer},i.value
 whenBroadcast:event_whenbroadcastreceived:hat:f.broadcast_option{...}
-sendBroadcast:event_broadcast:stack:i.broadcast_input{...}
-sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input{...}
+sendBroadcast:event_broadcast:stack:i.broadcast_input
+sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input
 
 # control - all blocks implemented
 # NOTE: if-else needs some attention. not sure that the command will parse well with the current set up
@@ -80,17 +83,17 @@ waitUntil:control_wait_until:stack:i.condition[bool]
 repeatUntil:control_repeat_until:c:i.condition[bool],i.substack
 stop:control_stop:cap:f.stop_option{all;this script;other scripts in sprite}
 whenCloneStart:control_start_as_clone:hat:
-createClone:control_create_clone_of:stack:i.clone_option{myself;...}
+createClone:control_create_clone_of:stack:i.clone_option(control_create_clone_of_menu;f.clone_option)
 deleteClone:control_delete_this_clone:cap:
 
 # sensing - all blocks implemented
-touching:sensing_touchingobject:reporter:i.touchingobjectmenu{mouse-pointer;edge;...}
+touching:sensing_touchingobject:reporter:i.touchingobjectmenu(sensing_touchingobjectmenu;f.touchingobjectmenu)
 touchingClr:sensing_touchingcolor:reporter:i.color
 clrTouchingClr:sensing_coloristouchingcolor:reporter:i.color,i.color2
-distanceto:sensing_distanceto:reporter:i.distancetomenu{mouse-pointer;...}
+distanceto:sensing_distanceto:reporter:i.distancetomenu(sensing_distancetomenu;f.distancetomenu)
 ask:sensing_askandwait:stack:i.question
 answer:sensing_answer:reporter:
-keypressed:sensing_keypressed:reporter:i.key_option{...}
+keypressed:sensing_keypressed:reporter:i.key_option(sensing_keyoptions;f.key_option)
 mouse:sensing_mousedown:reporter:
 mouseX:sensing_mousex:reporter:
 mouseY:sensing_mousey:reporter:
@@ -98,7 +101,7 @@ setdragmode:sensing_setdragmode:stack:f.drag_mode{draggable;not draggable}
 loudness:sensing_loudness:reporter:
 timer:sensing_timer:reporter:
 resetTime:sensing_resettimer:stack:
-getAttribute:sensing_of:reporter:f.property{x position;y position;direction;costume #;costume name;size;volume},i.object{...}
+getAttribute:sensing_of:reporter:f.property{x position;y position;direction;costume #;costume name;size;volume},i.object(sensing_of_object_menu;f.object)
 current:sensing_current:reporter:f.currentmenu{year;month;date;day of week;hour;minute;second}
 dayssince2000:sensing_dayssince2000:reporter:
 username:sensing_username:reporter:
@@ -123,7 +126,7 @@ length:operator_length:reporter:i.string
 contains:operator_contains:reporter:i.string1,i.string2
 mod:operator_mod:reporter:i.num1,i.num2
 round:operator_round:reporter:i.num
-mathop:operator_mathop:reporter:f.operator{abs;floor;ceiling;sqrt;sin;cos;tan;asin;acos;atan;ln;log;e^;10^},i.num
+mathop:operator_mathop:reporter:f.operator{abs;floor;ceiling;sqrt;sin;cos;tan;asin;acos;atan;ln;log;e ^;10 ^},i.num
 
 # variables - all blocks implemented
 # NOTE: potentially using = instead of setvar?

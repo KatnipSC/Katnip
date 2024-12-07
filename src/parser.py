@@ -199,14 +199,14 @@ class project():
                 bracket_depth = 0 # Track the depth of the scanner
                 # Collect lines for parsing the substack
                 while (line_num < len(lines) and lines[line_num].strip()) and not ("}" in lines[line_num] and bracket_depth == 0):
-                    if "{" in line[line_num]:
+                    if "{" in lines[line_num]:
                         bracket_depth += 1
-                    elif "}" in line[line_num]:
+                    elif "}" in lines[line_num]:
                         bracket_depth -= 1
                     substack_blocks.append(lines[line_num])
                     line_num += 1
-                if line_num + 1 < len(lines): # Add last closing bracket
-                    substack_blocks.append(lines[line_num])
+                #if line_num + 1 < len(lines): # Add last closing bracket
+                #    substack_blocks.append(lines[line_num])
 
                 # Check if it is end of file without running into a closing }
                 if line_num == len(lines) and not "}" in lines[line_num-1]:
