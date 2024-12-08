@@ -8,16 +8,32 @@
 # NOTE: all parameter names will be set to uppercase, so case does not matter
 # NOTE: commands are NOT case-sensitive. To change this, change command_manager and the way it matches the command name
 
+# BLOCKS:
+
+# internal reporters (not meant to be used directly, but the code will use them)
+# NOTE: DO NOT CHANGE THESE NAMES - they are supposed to be static
+goto_menu:motion_goto_menu:reporter:f.to
+glideto_menu:motion_glideto_menu:reporter:f.to
+point_towards_menu:motion_pointtowards_menu:reporter:f.towards
+costume_menu:looks_costume:reporter:f.costume
+backdrop_menu:looks_backdrops:reporter:f.backdrop
+sound_menu:sounds_sounds_menu:reporter:f.sound_menu
+clone_menu:control_create_clone_of_menu:reporter:f.clone_option
+touching_menu:sensing_touchingobjectmenu:reporter:f.touchingobjectmenu
+distance_menu:sensing_distancetomenu:reporter:f.distancetomenu
+key_menu:sensing_keyoptions:reporter:f.key_option
+sensingobj_menu:sensing_of_object_menu:reporter:f.object
+pen_menu:pen_menu_colorParam:reporter:f.colorParam
 
 # motion - all blocks implemented
 move:motion_movesteps:stack:i.steps
 turn:motion_turnright:stack:i.degrees
 gotoXY:motion_gotoxy:stack:i.x,i.y
-goto:motion_goto:stack:i.to(motion_goto_menu;f.to)
+goto:motion_goto:stack:i.to(goto_menu)
 glideXY:motion_glidesecstoxy:stack:i.secs,i.x,i.y
-glideto:motion_glideto:stack:i.to(motion_glideto_menu;f.to)
+glideto:motion_glideto:stack:i.to(glideto_menu)
 point:motion_pointindirection:stack:i.direction
-pointTo:motion_pointtowards:stack:i.towards(motion_pointtowards_menu;f.towards)
+pointTo:motion_pointtowards:stack:i.towards(point_towards_menu)
 changeX:motion_changexby:stack:i.dx
 setX:motion_setx:stack:i.x
 changeY:motion_changeyby:stack:i.dy
@@ -34,9 +50,9 @@ timeSay:looks_sayforsecs:stack:i.message,i.secs
 say:looks_say:stack:i.message
 timeThink:looks_thinkforsecs:stack:i.message,i.secs
 think:looks_think:stack:i.message
-switchCostume:looks_switchcostumeto:stack:i.costume(looks_costume;f.costume)
+switchCostume:looks_switchcostumeto:stack:i.costume(costume_menu)
 nextCostume:looks_nextcostume:stack:
-switchBackdrop:looks_switchbackdropto:stack:i.costume(looks_backdrops;f.backdrop)
+switchBackdrop:looks_switchbackdropto:stack:i.costume(backdrop_menu)
 nextBackdrop:looks_nextbackdrop:stack:
 changeSize:looks_changesizeby:stack:i.change
 setSize:looks_setsizeto:stack:i.size
@@ -52,8 +68,8 @@ getBackdrop:looks_backdropnumbername:reporter:f.number_name{number;name}
 size:looks_size:reporter:
 
 # Sound - all blocks implemented
-play:sound_play:stack:i.sound_menu(sounds_sounds_menu;f.sound_menu)
-playWait:sound_playuntildone:stack:i.sound_menu(sounds_sounds_menu;f.sound_menu)
+play:sound_play:stack:i.sound_menu(sound_menu)
+playWait:sound_playuntildone:stack:i.sound_menu(sound_menu)
 stopSounds:sound_stopallsounds:stack:
 changeSoundFx:sound_changeeffectby:stack:i.effect{pitch;pan left/right},i.value
 setSoundFx:sound_seteffectto:stack:i.effect{pitch;pan left/right},i.value
@@ -83,17 +99,17 @@ waitUntil:control_wait_until:stack:i.condition[bool]
 repeatUntil:control_repeat_until:c:i.condition[bool],i.substack
 stop:control_stop:cap:f.stop_option{all;this script;other scripts in sprite}
 whenCloneStart:control_start_as_clone:hat:
-createClone:control_create_clone_of:stack:i.clone_option(control_create_clone_of_menu;f.clone_option)
+createClone:control_create_clone_of:stack:i.clone_option(clone_menu)
 deleteClone:control_delete_this_clone:cap:
 
 # sensing - all blocks implemented
-touching:sensing_touchingobject:reporter:i.touchingobjectmenu(sensing_touchingobjectmenu;f.touchingobjectmenu)
+touching:sensing_touchingobject:reporter:i.touchingobjectmenu(touching_menu)
 touchingClr:sensing_touchingcolor:reporter:i.color
 clrTouchingClr:sensing_coloristouchingcolor:reporter:i.color,i.color2
-distanceto:sensing_distanceto:reporter:i.distancetomenu(sensing_distancetomenu;f.distancetomenu)
+distanceto:sensing_distanceto:reporter:i.distancetomenu(distance_menu)
 ask:sensing_askandwait:stack:i.question
 answer:sensing_answer:reporter:
-keypressed:sensing_keypressed:reporter:i.key_option(sensing_keyoptions;f.key_option)
+keypressed:sensing_keypressed:reporter:i.key_option(key_menu)
 mouse:sensing_mousedown:reporter:
 mouseX:sensing_mousex:reporter:
 mouseY:sensing_mousey:reporter:
@@ -101,7 +117,7 @@ setdragmode:sensing_setdragmode:stack:f.drag_mode{draggable;not draggable}
 loudness:sensing_loudness:reporter:
 timer:sensing_timer:reporter:
 resetTime:sensing_resettimer:stack:
-getAttribute:sensing_of:reporter:f.property{x position;y position;direction;costume #;costume name;size;volume},i.object(sensing_of_object_menu;f.object)
+getAttribute:sensing_of:reporter:f.property{x position;y position;direction;costume #;costume name;size;volume},i.object(sensingobj_menu)
 current:sensing_current:reporter:f.currentmenu{year;month;date;day of week;hour;minute;second}
 dayssince2000:sensing_dayssince2000:reporter:
 username:sensing_username:reporter:
@@ -156,6 +172,6 @@ stamp:pen_stamp:stack:
 penDown:pen_penDown:stack:
 penUp:pen_penUp:stack:
 changePen:pen_changePenColorParamBy:stack:i.color_param{color;saturation;brightness;transparency},i.value
-setPen:pen_setPenColorParamTo:stack:i.color_param{color;saturation;brightness;transparency},i.value
+setPen:pen_setPenColorParamTo:stack:i.color_param(pen_menu),i.value
 changePenSize:pen_changePenSizeBy:stack:i.size
 setPenSize:pen_setPenSizeTo:stack:i.size

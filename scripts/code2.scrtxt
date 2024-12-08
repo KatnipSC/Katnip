@@ -3,7 +3,7 @@ whenflag(){
     gotoxy(0,0)
     penclear()
     pendown()
-    setpen("color",50)
+    setpen("brightness",50)
     point(90)
     setvar($steps,0)
     repeatUntil(touching("_edge_")){

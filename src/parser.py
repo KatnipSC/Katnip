@@ -275,9 +275,9 @@ class project():
                 var_name = arg[1:]
                 return_args.append(["variable", [var_name, self._read_variable(var_name)]])
             elif arg.startswith('"'):
-                return_args.append(["str/num", arg[1:-1]])
+                return_args.append(["str", arg[1:-1]])
             elif self._is_num(arg):
-                return_args.append(["str/num", arg])
+                return_args.append(["num", arg])
             elif "(" in arg and ")" in arg:
                 # Create a new stack block with its relavent data
                 func_pieces = self._extract(arg)
@@ -300,6 +300,8 @@ class project():
         - name (str): The name of the block
         - args (list): The arguments for the block
         - prev (list): The previous block (if any)
+            - [0]: The previous block's id
+            - [1]: The previous block's data
         
         Returns:
         - block_id (str): The ID of the block
@@ -320,6 +322,9 @@ class project():
         # Get data about block (input parameters)
         #print("getting data about block:", name)
         data = command_manager.read_by_name(name)
+        print("getting block:", name)
+        if "menu" in name:
+            print("args:", args)
 
         # Create block template
         block = {
@@ -329,10 +334,17 @@ class project():
             "inputs": {},
             "fields": {},
             "shadow": False,
-            "topLevel": False,
-            "x": 0,
-            "y": 0
+            "topLevel": False
         }
+
+        # If block is not a reporter, create x and y coordinates for it
+        if not data["type"] == "reporter":
+            block["x"] = 0
+            block["y"] = 0
+
+        # If its a menu block, it needs a shadow flag
+        if "menu" in name:
+            block["shadow"] = True
 
         # Set parent block
         if prev:
@@ -351,29 +363,61 @@ class project():
 
         # Check for correct number of arguments
         if len(fill_args) != len(args):
-            error_handler.add_error(f"Invalid number of arguments. '{name}' expects [{len(fill_args)}] arguments", args, -1)
+            error_handler.add_error(f"Invalid number of arguments. '{name}' expects [{len(fill_args)}] arguments, but got [{len(args)}]", args, -1)
             error_handler.throw_errors()
 
         # Input args
         for fill_arg, arg in zip(fill_args, args):
+            # Figure out if arguments are for inputs or fields
             if fill_arg.startswith("i."):
-                boolean = "[bool]" in fill_arg
-                if boolean:
-                    fill_arg = fill_arg[:fill_arg.find("[")]+fill_arg[fill_arg.find("]")+1:]
-                if arg[0] == "str/num":
-                    block["inputs"][fill_arg[2:].upper()] = [1, [10, arg[1]]]
-                elif arg[0] == "variable":
-                    block["inputs"][fill_arg[2:].upper()] = [3, [12, arg[1][0], arg[1][1]], [10, "❤️"]]
-                elif arg[0] == "reporter":
-                    self.target["blocks"][arg[1][0]]["parent"] = block_id
-                    block["inputs"][fill_arg[2:].upper()] = [3, arg[1][0], [10, "❤️"]] if not boolean else [2, arg[1][0]]
-                elif arg[0] == "substack":
-                    block["inputs"][fill_arg[2:].upper()] = [2, arg[1]]
+                arg_type = "input"
             elif fill_arg.startswith("f."):
-                if arg[0] == "str/num":
-                    block["fields"][fill_arg[2:].upper()] = [arg[1], None]
-                elif arg[0] == "variable":
-                    block["fields"][fill_arg[2:].upper()] = arg[1]
+                arg_type = "field"
+            fill_arg = fill_arg[2:] # Remove leading type for argument (e.g. i.arg --> arg, or f.arg --> arg)
+
+            # Remove hints. This will hopefully be used when we get a gui for autocompletion
+            boolean = "[bool]" in fill_arg
+            if boolean:
+                fill_arg = fill_arg[:fill_arg.find("[")]+fill_arg[fill_arg.find("]")+1:]
+
+            # Handle menu items. These are not written directly, but instead are generated based on the arguments from their parents
+            if "(" in fill_arg and arg[0] == "str": # parse menu items
+                    arg[0] = "menu" # set the type to menu
+                    menu = self._create_block(fill_arg[fill_arg.find("(")+1:fill_arg.find(")")],[["str", str(arg[1])]],[block_id, block])
+                    arg[1] = menu[0] # provide the menu's opcode to the parent block
+                    self.target["blocks"][menu[0]] = menu[1] # add the block to the block list
+                    fill_arg = fill_arg[:fill_arg.find("(")]+fill_arg[fill_arg.find(")")+1:] # remove the menu data
+
+            # Pen extention blocks do not use all caps arguments for some reason 😖
+            if not ("menu" in name and "pen_" in data["opcode"]):
+                fill_arg = fill_arg.upper()
+
+            
+            # Handle input arguments, correctly adding them to the block json data
+            if arg_type == "input": # i. --> argument goes into inputs
+                match arg[0]:
+                    case "str":
+                        block["inputs"][fill_arg] = [1, [10, arg[1]]]
+                    case "num":
+                        block["inputs"][fill_arg] = [1, [10, arg[1]]]
+                    case "variable":
+                        block["inputs"][fill_arg] = [3, [12, arg[1][0], arg[1][1]], [10, "❤️"]]
+                    case "reporter":
+                        self.target["blocks"][arg[1][0]]["parent"] = block_id
+                        block["inputs"][fill_arg] = [3, arg[1][0], [10, "❤️"]] if not boolean else [2, arg[1][0]]
+                    case "substack":
+                        block["inputs"][fill_arg] = [2, arg[1]]
+                    case "menu":
+                        block["inputs"][fill_arg] = [1, arg[1]]
+            elif arg_type == "field": # f. --> argument goes into fields
+                match arg[0]:
+                    case "str":
+                        block["fields"][fill_arg] = [arg[1], None]
+                        print(block)
+                    case "num":
+                        block["fields"][fill_arg] = [arg[1], None]
+                    case "variable":
+                        block["fields"][fill_arg] = arg[1]
 
         print(block_id, block)
         return block_id, block
@@ -398,4 +442,7 @@ class project():
         for content_file in os.listdir(tmpdir):
             zip_ref.write(os.path.join(tmpdir, content_file), arcname=content_file)
         zip_ref.close()
+
+        with open("generated_projects\\project.json", "w") as f:
+            f.write(json.dumps(self.data))
         shutil.rmtree(tmpdir)
