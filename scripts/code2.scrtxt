@@ -1,14 +1,24 @@
-whenflag(){
-    setsize(5)
-    gotoxy(0,0)
+# Test2 - ScratchText syntax coloring test
+whenFlag(){
+    clearcounter()
+    setSize(5)
+    gotoXY(0,0)
     penclear()
     pendown()
     setpen("brightness",50)
     point(90)
     setvar($steps,0)
-    repeatUntil(touching("_edge_")){
+    listdeleteall(@positions)
+    while(not(touching("_edge_"))){
         changevar($steps,1)
         move($steps)
         turn(subtract(360,$steps))
+        incrcounter()
+        listadd(join("Turn #: ",join(counter(),join(" and pointing: ", direction()))),@positions) # 15
     }
+}
+
+whenFlag(){
+    say("hiiiiiii")
+    sendbroadcast("doobee") # This is hypotheoretically useless. Just like the word "hypotheoretically"
 }

@@ -14,8 +14,15 @@ import error_handler
 
 class project():
     def __init__(self, filename):
-        self.CUR_ID = 0
-        self.variables = dict()
+        # self.stacks and self.stack_height are used to space out the stacks and position comments
+        self.stacks = 0
+        self.stack_height = 25
+        self.stack_spacing = 600 # The x-tiling spacing between stacks
+
+        self.CUR_ID = 0 # Used to make unqiue id's
+        self.variables = dict() # List of all variables
+        self.lists = dict() # List of all lists
+        self.broadcasts = dict() # List of all broadcast
         tmpdir = tempfile.mkdtemp()
         with zipfile.ZipFile(filename, "r") as zip_ref:
             zip_ref.extractall(tmpdir)
@@ -64,6 +71,27 @@ class project():
         # Filter out empty arguments
         pieces["args"] = [arg for arg in args if arg]
         return pieces
+    
+    def _remove_whitespace(self, text: str):
+        """
+        Removes whitespace from the text, ignoring any whitespace inside quotes (strings)
+
+        Parameters:
+        - text (str): The text to remove whitespace from
+
+        Returns:
+        - str: The text with whitespace removed, ignoring quotes
+        """
+        depth = 1
+        return_text = ''
+        for letter in text:
+            if letter == '"':
+                depth *= -1
+            if letter == ' ' and depth == 1:
+                continue
+            else:
+                return_text += letter
+        return return_text
 
     def _is_num(self, value: str):
         """
@@ -116,6 +144,87 @@ class project():
             self.variables[name] = self._generate_id(arg="var")
         return self.variables[name]
     
+    def _read_list(self, name: str):
+        """
+        Returns the id of a list. Creates the list if it does not exist.
+
+        Parameters:
+        - name (str): The name of the list
+
+        Returns:
+        - str: The id of the list
+        """
+
+        if not name in self.lists:
+            self.lists[name] = self._generate_id(arg="list")
+        return self.lists[name]
+    
+    def _read_broadcast(self, name: str):
+        """
+        Returns the id of a broadcast. Creates the broadcast if it does not exist.
+
+        Parameters:
+        - name (str): The name of the broadcast
+
+        Returns:
+        - str: The id of the broadcast
+        """
+
+        if not name in self.broadcasts:
+            self.broadcasts[name] = self._generate_id(arg="broadcast")
+        return self.broadcasts[name]
+    
+    def _create_comment(self, comment: str, block_id: str):
+        """
+        Returns the id of a comment. Creates the comment if it does not exist
+
+        Parameters:
+        - comment (str): The comment to add
+        - block_id (str): The id of the block that the comment is attached to
+
+        Returns:
+        - str: The id of the comment
+        """
+
+        comment_id = self._generate_id(arg="comment")
+        self.target["comments"][comment_id] = {
+            "blockId": block_id,
+            "x": self.stacks * self.stack_spacing + 200,
+            "y": self.stack_height,
+            "width": 200,
+            "height": 200,
+            "minimized": True,
+            "text": comment
+        }
+        return comment_id
+    
+    def _extract_comment(self, text: str):
+        """
+        Seperates the comment from the line of code and returns a tuple containing both.
+
+        Parameters:
+        - text (str): The line of code containing a comment
+
+        Returns:
+        - line (tuple): The two split pieces of the line:
+            - code (str): The line of code
+            - comment (str): The comment
+        """
+
+        comment_start = -1
+        depth = 1
+        for idx, letter in enumerate(text):
+            if letter == '"':
+                depth *= -1
+            if letter == '#' and depth == 1:
+                comment_start = idx
+                break
+        
+        if comment_start == -1:
+            return text, None
+        else:
+            return text[:comment_start], text[comment_start+1:].strip()
+    
     def add_sprite_scripts(self, target: str, program: str):
         """
         Adds sprite scripts to the specified target, parsing through program.
@@ -124,23 +233,36 @@ class project():
         - target (str): The name of the target (e.g. "S1" or "Sprite1")
         - program (str | list): The program to parse and add to the target
         """
-        if isinstance(program, str):
-            program = program.replace(" ","").split("\n")
 
         # Parse through the program
         for existing_target in self.data["targets"]:
             if existing_target["name"] == target:
                 self.target = existing_target
-                self._parse(program)
+                self._parse(program.split("\n"))
 
         # Add relavent variables
         for target in self.data["targets"]:
-            if target["isStage"]:
+            if target["isStage"]: # Only add these for stage (all variables are global so they go in stage)
+                # Process the generated variables
                 if "variables" not in target:
                     target["variables"] = dict()
                 for variable in self.variables:
                     variable_id = self.variables[variable]
                     target["variables"][variable_id] = [variable, "0"]
+
+                # Process the generated lists
+                if "lists" not in target:
+                    target["lists"] = dict()
+                for list_name in self.lists:
+                    list_id = self.lists[list_name]
+                    target["lists"][list_id] = [list_name,[]]
+
+                # Process the generated broadcasts
+                if "broadcasts" not in target:
+                    target["broadcasts"] = dict()
+                for broadcast_name in self.broadcasts:
+                    broadcast_id = self.broadcasts[broadcast_name]
+                    target["broadcasts"][broadcast_id] = broadcast_name
        
     def _parse(self, lines: list, substack=False):
         """
@@ -160,17 +282,34 @@ class project():
         line_num = 0 # We are using a while loop with counter instead of for loop to account for c blocks with blocks inside "substack"
         top_id = ""
         while line_num < len(lines):
-            if not substack: # Exiting hat block
+            # Check if line is a comment line
+            if lines[line_num].startswith("#"): # I use ".startswith" instead of "in" bc i want to create comments attached to blocks later
+                line_num += 1
+                continue
+
+            # Check if there is an empty line
+            if lines[line_num] == "":
+                line_num += 1
+                continue
+
+            # Exiting hat block
+            if not substack:
                 if "}" in lines[line_num]:
                     prev_block = []
                     line_num += 1
+                    self.stacks += 1 # Increase number of stacks
+                    self.stack_height = 25 # Reset stack height
                     continue
 
             # Setup line counter and line value
             line = lines[line_num]
+            print(line)
+
+            # Remove comments (if they exist)
+            line, comment = self._extract_comment(line) # Will return (line, None) if a comment is not found
 
             # Parse line
-            token_list = line.replace(" ","") # remove whitespace
+            token_list = self._remove_whitespace(line) # remove whitespace
 
             # Split string into name and arguments
             token_list = self._extract(token_list)
@@ -183,11 +322,26 @@ class project():
                 # Make empty argument list
                 func_args = []
 
+            heights = {
+                "hat": 7,
+                "reporter": 0, # Look in "_simplify_args" to see/edit this value. It is applied there bc there reporters in reporters are processed
+                "stack": 48,
+                "extension_stack": 56,
+                "c": 48,
+                "c_end": 32,
+                "cap": 48
+            }
+
             # Define type of block being processed
             token_type = command_manager.read_by_name(token_list["name"])
             if token_type:
+                if "pen" in token_type["opcode"] and token_type["type"] == "stack": # For some odd reason, extension stack blocks are longer than regular stack blocks 😖
+                    self.stack_height += heights["extension_stack"]
+                else:
+                    self.stack_height += heights[token_type["type"]]
                 token_type = token_type["type"]
             else:
+                print()
                 error_handler.add_error(f"Invalid command '{token_list['name']}'", lines[line_num], line_num+1)
                 error_handler.throw_errors()
 
@@ -205,8 +359,6 @@ class project():
                         bracket_depth -= 1
                     substack_blocks.append(lines[line_num])
                     line_num += 1
-                #if line_num + 1 < len(lines): # Add last closing bracket
-                #    substack_blocks.append(lines[line_num])
 
                 # Check if it is end of file without running into a closing }
                 if line_num == len(lines) and not "}" in lines[line_num-1]:
@@ -224,13 +376,16 @@ class project():
                     func_args.append(["substack", substack_top_block])
 
                 # Create the c-block
-                new_block = self._create_block(token_list["name"], func_args, prev_block)
+                new_block = self._create_block(token_list["name"], func_args, prev_block, comment)
 
                 # Update the substack_top_block to have the parent be the c-block
                 self.target["blocks"][substack_top_block]["parent"] = new_block[0]
 
+                # Increase height by end of c-block
+                self.stack_height += heights["c_end"]
+
             else: # Normal parse. Any block that isnt a c-block will be processed this way
-                new_block = self._create_block(token_list["name"], func_args, prev_block)
+                new_block = self._create_block(token_list["name"], func_args, prev_block, comment)
 
             if prev_block:
                 prev_block[1]["next"] = new_block[0] # Update the previous block's "next" attribute
@@ -249,18 +404,22 @@ class project():
         if substack:
             return top_id # Return the top block of the substack
 
-    def _simplify_args(self, args: list | str, line_num: int):
+    def _simplify_args(self, args: list | str, line_num: int, itr = 0):
         """
         Simplifies the arguments, parsing through recursively.
 
         Parameters:
         - args (list | str): The list of arguments to simplify
         - line_num (int): The line number for error handling
+        - itr (int): Internal counter for recursion of reporters
 
         Returns:
         - return_args (list): The simplified list of arguments (2D array)
             List of [type, relavent_data] for each argument
         """
+
+        if itr == 0: # first recursion
+            self.itr = 0
 
         if args == "": # No argument blocks
             return []
@@ -274,14 +433,21 @@ class project():
             if arg.startswith("$"):
                 var_name = arg[1:]
                 return_args.append(["variable", [var_name, self._read_variable(var_name)]])
+            elif arg.startswith("@"):
+                list_name = arg[1:]
+                return_args.append(["list", [list_name, self._read_list(list_name)]])
             elif arg.startswith('"'):
                 return_args.append(["str", arg[1:-1]])
             elif self._is_num(arg):
                 return_args.append(["num", arg])
             elif "(" in arg and ")" in arg:
+                if itr == 0: # Increase the stack height bc a reporter in a reporter increases the width of a c-block
+                    self.stack_height += 4 # First recursion level is always slightly more than the next
+                elif itr > self.itr: # Recursion depth has not been reached before
+                    self.stack_height += 1.5 # Increase the stack height slightly less for the later recursion levels
                 # Create a new stack block with its relavent data
                 func_pieces = self._extract(arg)
-                simplified_args = self._simplify_args(func_pieces["args"], line_num)
+                simplified_args = self._simplify_args(func_pieces["args"], line_num, itr + 1)
                 func = self._create_block(func_pieces["name"], simplified_args)
                 self.target["blocks"][func[0]] = func[1]
 
@@ -292,7 +458,7 @@ class project():
         error_handler.throw_errors() # Will automatically check for any errors, and will raise all found errors
         return return_args
 
-    def _create_block(self, name, args, prev=None):
+    def _create_block(self, name, args, prev=None, comment=None):
         """
         Creates a new block given its name and arguments
 
@@ -302,6 +468,7 @@ class project():
         - prev (list): The previous block (if any)
             - [0]: The previous block's id
             - [1]: The previous block's data
+        - comment (str | None): The comment for the block
         
         Returns:
         - block_id (str): The ID of the block
@@ -323,8 +490,6 @@ class project():
         #print("getting data about block:", name)
         data = command_manager.read_by_name(name)
         print("getting block:", name)
-        if "menu" in name:
-            print("args:", args)
 
         # Create block template
         block = {
@@ -337,10 +502,14 @@ class project():
             "topLevel": False
         }
 
+        # Check if a comment exists, if it does, add it
+        if comment:
+            block["comment"] = self._create_comment(comment, block_id)
+
         # If block is not a reporter, create x and y coordinates for it
-        if not data["type"] == "reporter":
-            block["x"] = 0
-            block["y"] = 0
+        if data["type"] == "hat":
+            block["x"] = self.stacks * self.stack_spacing
+            block["y"] = 25
 
         # If its a menu block, it needs a shadow flag
         if "menu" in name:
@@ -378,7 +547,11 @@ class project():
             # Remove hints. This will hopefully be used when we get a gui for autocompletion
             boolean = "[bool]" in fill_arg
             if boolean:
-                fill_arg = fill_arg[:fill_arg.find("[")]+fill_arg[fill_arg.find("]")+1:]
+                if arg[0] == "reporter":
+                    fill_arg = fill_arg[:fill_arg.find("[")]+fill_arg[fill_arg.find("]")+1:]
+                else:
+                    error_handler.add_error(f"Invalid input argument type. Expected 'boolean', got '{arg[0]}'", fill_arg, -1)
+                    error_handler.throw_errors()
 
             # Handle menu items. These are not written directly, but instead are generated based on the arguments from their parents
             if "(" in fill_arg and arg[0] == "str": # parse menu items
@@ -387,6 +560,10 @@ class project():
                     arg[1] = menu[0] # provide the menu's opcode to the parent block
                     self.target["blocks"][menu[0]] = menu[1] # add the block to the block list
                     fill_arg = fill_arg[:fill_arg.find("(")]+fill_arg[fill_arg.find(")")+1:] # remove the menu data
+
+            # Preprocess the argument, checking if it is a broadcast argument. If it is, chang ethe arg[0] type to broadcast
+            if (arg[0] == "str" or arg[0] == "num") and "broadcast" in fill_arg:
+                arg[0] = "broadcast"
 
             # Pen extention blocks do not use all caps arguments for some reason 😖
             if not ("menu" in name and "pen_" in data["opcode"]):
@@ -402,6 +579,8 @@ class project():
                         block["inputs"][fill_arg] = [1, [10, arg[1]]]
                     case "variable":
                         block["inputs"][fill_arg] = [3, [12, arg[1][0], arg[1][1]], [10, "❤️"]]
+                    case "list":
+                        block["inputs"][fill_arg] = [3, [13, arg[1][0], arg[1][1]], [10, "❤️"]]
                     case "reporter":
                         self.target["blocks"][arg[1][0]]["parent"] = block_id
                         block["inputs"][fill_arg] = [3, arg[1][0], [10, "❤️"]] if not boolean else [2, arg[1][0]]
@@ -409,15 +588,20 @@ class project():
                         block["inputs"][fill_arg] = [2, arg[1]]
                     case "menu":
                         block["inputs"][fill_arg] = [1, arg[1]]
+                    case "broadcast":
+                        block["inputs"][fill_arg] = [1, [11, arg[1], self._read_broadcast(arg[1])]]
             elif arg_type == "field": # f. --> argument goes into fields
                 match arg[0]:
                     case "str":
                         block["fields"][fill_arg] = [arg[1], None]
-                        print(block)
                     case "num":
                         block["fields"][fill_arg] = [arg[1], None]
                     case "variable":
                         block["fields"][fill_arg] = arg[1]
+                    case "list":
+                        block["fields"][fill_arg] = arg[1]
+                    case "broadcast":
+                        block["fields"][fill_arg] = [arg[1], self._read_broadcast(arg[1])]
 
         print(block_id, block)
         return block_id, block

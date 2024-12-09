@@ -25,7 +25,7 @@ key_menu:sensing_keyoptions:reporter:f.key_option
 sensingobj_menu:sensing_of_object_menu:reporter:f.object
 pen_menu:pen_menu_colorParam:reporter:f.colorParam
 
-# motion - all blocks implemented
+# NAME: motion
 move:motion_movesteps:stack:i.steps
 turn:motion_turnright:stack:i.degrees
 gotoXY:motion_gotoxy:stack:i.x,i.y
@@ -44,7 +44,7 @@ xPos:motion_xposition:reporter:
 yPos:motion_yposition:reporter:
 direction:motion_direction:reporter:
 
-# looks - all blocks implemented
+# NAME: looks
 # NOTE: ideally changelayer would have a default "forward" and then to go backwards just use negitive numbers
 timeSay:looks_sayforsecs:stack:i.message,i.secs
 say:looks_say:stack:i.message
@@ -67,7 +67,7 @@ getCostume:looks_costumenumbername:reporter:f.number_name{number;name}
 getBackdrop:looks_backdropnumbername:reporter:f.number_name{number;name}
 size:looks_size:reporter:
 
-# Sound - all blocks implemented
+# NAME: sound
 play:sound_play:stack:i.sound_menu(sound_menu)
 playWait:sound_playuntildone:stack:i.sound_menu(sound_menu)
 stopSounds:sound_stopallsounds:stack:
@@ -78,7 +78,7 @@ changeVolume:sound_changevolumeby:stack:i.volume
 setVolume:sound_setvolumeto:stack:i.volume
 volume:sound_volume:reporter:
 
-# events - all blocks implemented
+# NAME: events
 whenFlag:event_whenflagclicked:hat:
 whenKey:event_whenkeypressed:hat:f.key_option{...}
 whenSpriteClicked:event_whenthisspriteclicked:hat:
@@ -88,7 +88,7 @@ whenBroadcast:event_whenbroadcastreceived:hat:f.broadcast_option{...}
 sendBroadcast:event_broadcast:stack:i.broadcast_input
 sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input
 
-# control - all blocks implemented
+# NAME: control
 # NOTE: if-else needs some attention. not sure that the command will parse well with the current set up
 wait:control_wait:stack:i.duration
 repeat:control_repeat:c:i.times,i.substack
@@ -101,8 +101,14 @@ stop:control_stop:cap:f.stop_option{all;this script;other scripts in sprite}
 whenCloneStart:control_start_as_clone:hat:
 createClone:control_create_clone_of:stack:i.clone_option(clone_menu)
 deleteClone:control_delete_this_clone:cap:
+while:control_while:c:i.condition,i.substack
+for:control_for_each:c:f.variable,i.value
+allAtOnce:control_all_at_once:c:i.substack
+counter:control_get_counter:reporter:
+clearCounter:control_clear_counter:stack:
+incrCounter:control_incr_counter:stack:
 
-# sensing - all blocks implemented
+# NAME: sensing
 touching:sensing_touchingobject:reporter:i.touchingobjectmenu(touching_menu)
 touchingClr:sensing_touchingcolor:reporter:i.color
 clrTouchingClr:sensing_coloristouchingcolor:reporter:i.color,i.color2
@@ -122,7 +128,7 @@ current:sensing_current:reporter:f.currentmenu{year;month;date;day of week;hour;
 dayssince2000:sensing_dayssince2000:reporter:
 username:sensing_username:reporter:
 
-# operators - all blocks implemented
+# NAME: operators
 # NOTE: Eventually making these operations standalone:
 #    + - * / mod < > == or and
 add:operator_add:reporter:i.num1,i.num2
@@ -144,14 +150,14 @@ mod:operator_mod:reporter:i.num1,i.num2
 round:operator_round:reporter:i.num
 mathop:operator_mathop:reporter:f.operator{abs;floor;ceiling;sqrt;sin;cos;tan;asin;acos;atan;ln;log;e ^;10 ^},i.num
 
-# variables - all blocks implemented
+# NAME: variables
 # NOTE: potentially using = instead of setvar?
 setvar:data_setvariableto:stack:f.variable{...},i.value
 changevar:data_changevariableby:stack:f.variable{...},i.value
 showvar:data_showvariable:stack:f.variable{...}
 hidevar:data_hidevariable:stack:f.variable{...}
 
-# lists - all blocks implemented
+# NAME: lists
 # NOTE: potentially using @ to denote list just like variables use $
 listAdd:data_addtolist:stack:i.item,f.list
 listDelete:data_deleteoflist:stack:i.index,f.list
@@ -165,7 +171,7 @@ listContains:data_listcontainsitem:reporter:f.list,i.item
 listShow:data_showlist:stack:f.list
 listHide:data_hidelist:stack:f.list
 
-# pen - all blocks implemented
+# NAME: pen
 # NOTE: Left out the set pen color to (color) because it is redundant, as it can be handled using the setPen with color_param set to "color"
 penClear:pen_clear:stack:
 stamp:pen_stamp:stack:
