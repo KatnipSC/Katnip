@@ -129,7 +129,7 @@ dayssince2000:sensing_dayssince2000:reporter:
 username:sensing_username:reporter:
 
 # NAME: operators
-# NOTE: Eventually making these operations standalone:
+# NOTE: Might make these operations standalone:
 #    + - * / mod < > == or and
 add:operator_add:reporter:i.num1,i.num2
 subtract:operator_subtract:reporter:i.num1,i.num2
@@ -151,14 +151,12 @@ round:operator_round:reporter:i.num
 mathop:operator_mathop:reporter:f.operator{abs;floor;ceiling;sqrt;sin;cos;tan;asin;acos;atan;ln;log;e ^;10 ^},i.num
 
 # NAME: variables
-# NOTE: potentially using = instead of setvar?
 setvar:data_setvariableto:stack:f.variable{...},i.value
 changevar:data_changevariableby:stack:f.variable{...},i.value
 showvar:data_showvariable:stack:f.variable{...}
 hidevar:data_hidevariable:stack:f.variable{...}
 
 # NAME: lists
-# NOTE: potentially using @ to denote list just like variables use $
 listAdd:data_addtolist:stack:i.item,f.list
 listDelete:data_deleteoflist:stack:i.index,f.list
 listDeleteAll:data_deletealloflist:stack:f.list
@@ -172,11 +170,11 @@ listShow:data_showlist:stack:f.list
 listHide:data_hidelist:stack:f.list
 
 # NAME: pen
-# NOTE: Left out the set pen color to (color) because it is redundant, as it can be handled using the setPen with color_param set to "color"
 penClear:pen_clear:stack:
 stamp:pen_stamp:stack:
 penDown:pen_penDown:stack:
 penUp:pen_penUp:stack:
+hexPen:pen_setPenColorToColor:stack:i.color
 changePen:pen_changePenColorParamBy:stack:i.color_param{color;saturation;brightness;transparency},i.value
 setPen:pen_setPenColorParamTo:stack:i.color_param(pen_menu),i.value
 changePenSize:pen_changePenSizeBy:stack:i.size

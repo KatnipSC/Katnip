@@ -1,7 +1,7 @@
 # Stress test for comment heights
-whenFlag(){ # this is a cap
+whenFlag(){
     penClear() # this is a ex_stack
-    move(1) # this is a stack
+    move(join(1,2)) # this is a stack
     if(or(mouse(),mouse())) { # this is a c 1/2 with a reporter inside
         stop("all") # this is a cap
     }
@@ -10,16 +10,19 @@ whenFlag(){ # this is a cap
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
+    penClear() # this is a ex_stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
+    penClear() # this is a ex_stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack
+    penClear() # this is a ex_stack
     move(1) # this is a stack
     move(1) # this is a stack
     move(1) # this is a stack

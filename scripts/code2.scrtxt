@@ -1,4 +1,4 @@
-# Test2 - ScratchText syntax coloring test
+# Test2 ScratchText syntax coloring test
 whenFlag(){
     clearcounter()
     setSize(5)
@@ -6,19 +6,24 @@ whenFlag(){
     penclear()
     pendown()
     setpen("brightness",50)
+    hexpen("#96d056")
     point(90)
     setvar($steps,0)
     listdeleteall(@positions)
+    listadd("",@positions) # somth
     while(not(touching("_edge_"))){
         changevar($steps,1)
         move($steps)
         turn(subtract(360,$steps))
         incrcounter()
-        listadd(join("Turn #: ",join(counter(),join(" and pointing: ", direction()))),@positions) # 15
+        listadd("",@positions) # somth else
+        if (mouse()) {
+            timesay("You have clicked your mouse",0.5)
+        }
     }
 }
 
-whenFlag(){
-    say("hiiiiiii")
+whenFlag(){ # 2nd part pls work
+    say("hiiiiiii") # cmonnn lesgo
     sendbroadcast("doobee") # This is hypotheoretically useless. Just like the word "hypotheoretically"
 }
