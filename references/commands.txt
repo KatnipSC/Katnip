@@ -85,6 +85,7 @@ whenSpriteClicked:event_whenthisspriteclicked:hat:
 whenBackdropSwitch:event_whenbackdropswitchesto:hat:f.backdrop{backdrop1;...}
 whenGreater:event_whengreaterthan:hat:f.whengreaterthanmenu{loudness,timer},i.value
 whenBroadcast:event_whenbroadcastreceived:hat:f.broadcast_option{...}
+whenTouching:event_whentouchingobject:hat:i.touchingobjectmenu(touching_menu)
 sendBroadcast:event_broadcast:stack:i.broadcast_input
 sendBroadcastWait:event_broadcastandwait:stack:i.broadcast_input
 

@@ -1,0 +1,6 @@
+if (mouse()) {
+    say("yup")
+} 
+else {
+    move(2)
+}
