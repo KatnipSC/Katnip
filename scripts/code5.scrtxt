@@ -1,6 +1,13 @@
-if (mouse()) {
+while(mouse()) {
+    if (mouse()) {
     say("yup")
-} 
-else {
-    move(2)
+    } else {
+        if (mouse()) {
+            say("yup")
+        } else {
+            move(2)
+        }
+        say("yup")
+    }
+    say("nope")
 }

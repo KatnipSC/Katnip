@@ -36,8 +36,7 @@ whenFlag() {
 
         # Check for touching the edge
         if(touching("_edge_")) {
-            # Handle horizontal collisions
-            changeX(-$dx)
+            changeX(multiply(-1,$dx))
 
             # Handle vertical collisions (ground/wall)
             if(lt($dy, 0)) {
@@ -46,7 +45,7 @@ whenFlag() {
                 setvar($onGround, "false") # If moving up, not grounded
             }
 
-            changeY(-$dy)                # Undo vertical movement
+            changeY(multiply(-1,$dy))                # Undo vertical movement
             setvar($dy, 0)               # Stop vertical motion
         } else {
             setvar($onGround, "false")      # Not touching the edge = not grounded

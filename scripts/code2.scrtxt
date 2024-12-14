@@ -21,9 +21,9 @@ whenFlag(){
             timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test
         } else {
             say("Ur not clicking ur mouse")
-        }
-    }
-}
+        } # 1
+    } # 2
+} # 3
 
 whenkey("space"){ # 2nd part pls work
     say("hiiiiiii") # cmonnn lesgo

@@ -1,0 +1,49 @@
+On line: whenFlag(){
+On line:     clearcounter()
+On line:     setSize(5)
+On line:     gotoXY(0,0)
+On line:     penclear()
+On line:     pendown()
+On line:     setpen("brightness",50)
+On line:     hexpen("#96d056")
+On line:     point(90)
+On line:     setvar($steps,0)
+On line:     listdeleteall(@positions)
+On line:     listadd("",@positions) 
+On line:     while(not(touching("_edge_"))){
+Processing line 14:         changevar($steps,1) (bracket depth: 1), False
+Processing line 15:         move($steps) (bracket depth: 1), False
+Processing line 16:         turn(subtract(360,$steps)) (bracket depth: 1), False
+Processing line 17:         incrcounter() (bracket depth: 1), False
+Processing line 18:         listadd("",@positions) # somth else (bracket depth: 1), False
+Processing line 19:         if (mouse()) { (bracket depth: 2), False
+Processing line 20:             timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test (bracket depth: 2), False
+Processing line 21:         } else { (bracket depth: 2), True
+Processing line 22:             say("Ur not clicking ur mouse") (bracket depth: 2), False
+Processing line 23:         } # 1 (bracket depth: 1), True
+Processing line 24:     } # 2 (bracket depth: 0), True
+HERES MY HAUL: ['        changevar($steps,1)', '        move($steps)', '        turn(subtract(360,$steps))', '        incrcounter()', '        listadd("",@positions) # somth else', '        if (mouse()) {', '            timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test', '        } else {', '            say("Ur not clicking ur mouse")', '        } # 1']
+On line:         changevar($steps,1)
+On line:         move($steps)
+On line:         turn(subtract(360,$steps))
+On line:         incrcounter()
+On line:         listadd("",@positions) 
+On line:         if (mouse()) {
+Processing line 6:             timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test (bracket depth: 1), False
+Processing line 7:         } else { (bracket depth: 1), True
+Processing line 8:             say("Ur not clicking ur mouse") (bracket depth: 1), False
+Processing line 9:         } # 1 (bracket depth: 0), True
+HERES MY HAUL: ['            timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test', 'else', '            say("Ur not clicking ur mouse")']
+!!! Else ['            timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test']['            say("Ur not clicking ur mouse")']
+On line:             timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) 
+Substack: scratchtext-28            timesay("You have clicked your mouse. This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)  This means that you went to your mouse and use your pointer finger to click it. (maybe) (maybe not)",0.5) # this is a comment test
+On line:             say("Ur not clicking ur mouse")
+Substack: scratchtext-30            say("Ur not clicking ur mouse")
+ifelse
+Substack: scratchtext-20        changevar($steps,1)
+while
+On line: whenkey("space"){ 
+On line:     say("hiiiiiii") 
+On line:     sendbroadcast("doobee") 
+On line: whentouching("_mouse_"){
+On line:     say("ouch. you hit me") 

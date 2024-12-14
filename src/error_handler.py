@@ -32,3 +32,15 @@ def throw_errors():
         errors.clear()
 
         raise Exception(f"[{total_errors}] invalid commands found. See above for details.")
+    
+def log(message):
+    """
+    Logs a message to the "logs.txt file"
+    
+    Parameters:
+    - message (str): The message to log
+    """
+    
+    with open("generated_projects/logs.txt", "a") as f:
+        f.write(f"{message}\n")
+        f.close()
