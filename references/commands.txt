@@ -57,7 +57,7 @@ nextBackdrop:looks_nextbackdrop:stack:
 changeSize:looks_changesizeby:stack:i.change
 setSize:looks_setsizeto:stack:i.size
 changeFx:looks_changeeffectby:stack:f.effect{color;fisheye;whirl;pixelate;mosaic;brightness;ghost},i.change
-setFx:looks_seteffectto:stack:f.effect{color;fisheye;whirl;pixelate;mosaic;brightness;ghost},i.change
+setFx:looks_seteffectto:stack:f.effect{color;fisheye;whirl;pixelate;mosaic;brightness;ghost},i.value
 clearFx:looks_cleargraphiceffects:stack:
 show:looks_show:stack:
 hide:looks_hide:stack:

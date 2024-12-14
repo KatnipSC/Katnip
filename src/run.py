@@ -8,7 +8,7 @@ import os
 # Validify commands are all correcly defined
 validify_commands.validify_commands()
 
-with open("scripts/code2.scrtxt", "r") as f:
+with open("scripts/chatgpt2.scrtxt", "r") as f:
     code = f.read()
     f.close()
 

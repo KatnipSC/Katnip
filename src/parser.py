@@ -581,11 +581,11 @@ class project():
                 return_args.append(["num", arg])
             elif "(" in arg and ")" in arg:
                 self.stack_width += 100 # Increase width of stack
-                if itr == 0: # Increase the stack height bc a reporter in a reporter increases the width of a c-block
-                    self.stack_height += 0 # First recursion level is always slightly more than the next
+                if itr == 0: # Increase the stack height bc a reporter in a reporter increases the width of a block
+                    self.stack_height += 0 # First recursion level is always 0
                 elif itr > self.itr: # Recursion depth has not been reached before
                     self.itr += 1
-                    self.stack_height += 8 # Increase the stack height slightly less for the later recursion levels
+                    self.stack_height += 8 # Increase the stack height
                 # Create a new stack block with its relavent data
                 func_pieces = self._extract(arg)
                 simplified_args = self._simplify_args(func_pieces["args"], line_num, itr + 1)
