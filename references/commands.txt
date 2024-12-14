@@ -103,7 +103,7 @@ whenCloneStart:control_start_as_clone:hat:
 createClone:control_create_clone_of:stack:i.clone_option(clone_menu)
 deleteClone:control_delete_this_clone:cap:
 while:control_while:c:i.condition,i.substack
-for:control_for_each:c:f.variable,i.value
+for:control_for_each:c:f.variable,i.value,i.substack
 allAtOnce:control_all_at_once:c:i.substack
 counter:control_get_counter:reporter:
 clearCounter:control_clear_counter:stack:
