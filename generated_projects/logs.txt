@@ -13,7 +13,9 @@ On line:     setvar($xMin, -2.0)
 On line:     setvar($xMax, 1.0)
 On line:     setvar($yMin, -1.5)
 On line:     setvar($yMax, 1.5)
+Increasing stack height: $resolution at depth: 1 with limit: 0
 On line:     setvar($width, divide(300, $resolution))  
+Increasing stack height: $resolution at depth: 1 with limit: 0
 On line:     setvar($height, divide(300, $resolution)) 
 On line:     setvar($steps, 0)     
 On line:     setvar($stepsX, 0)    
@@ -59,6 +61,9 @@ Processing line 69:  (bracket depth: 1), False
 Processing line 70:         changeVar($steps, 1) # Increment Y step (bracket depth: 1), False
 Processing line 71:     } (bracket depth: 0), True
 HERES MY HAUL: ['        # Calculate the Y-coordinate for the current row', '        setvar($y, add($yMax, multiply(divide($steps, $height), subtract($yMin, $yMax))))', '        setvar($stepsX, 0) # Reset horizontal steps for each row', '', '        repeat($width) {', '            # Calculate the X-coordinate for the current column', '            setvar($x, add($xMin, multiply(divide($stepsX, $width), subtract($xMax, $xMin))))', '', '            # Reset variables for the Mandelbrot iteration', '            setvar($zRe, 0)', '            setvar($zIm, 0)', '            setvar($iter, 0)', '            setvar($zMagnitude, 0)', '', '            while(and(lt($iter, $maxIterations), lt($zMagnitude, 4))) {', '                setvar($zReTemp, subtract(multiply($zRe, $zRe), multiply($zIm, $zIm)))', '                setvar($zIm, add(multiply(2, multiply($zRe, $zIm)), $y))', '                setvar($zRe, add($zReTemp, $x))', '                setvar($zMagnitude, add(multiply($zRe, $zRe), multiply($zIm, $zIm))) # Magnitude calculation', '                changeVar($iter, 1)', '            }', '', '            # Determine pixel color', '            if (equals($iter, $maxIterations)) {', '                hexPen("#000000") # Black for points in the set', '            } else {', '                setPen("brightness", multiply(100, divide($iter, $maxIterations))) # Grayscale gradient', '            }', '', '            # Move to the correct position and draw the pixel', '            gotoXY(add(-150, multiply($stepsX, $resolution)), subtract(150, multiply($steps, $resolution)))', '            penDown()', '            move($resolution) # Draw the pixel with adjusted size', '            penUp()', '', '            changeVar($stepsX, 1) # Increment X step', '        }', '', '        changeVar($steps, 1) # Increment Y step']
+Increasing stack height: $yMax at depth: 1 with limit: 0
+Increasing stack height: divide($steps,$height) at depth: 2
+Increasing stack height: $steps at depth: 3 with limit: 2
 On line:         setvar($y, add($yMax, multiply(divide($steps, $height), subtract($yMin, $yMax))))
 On line:         setvar($stepsX, 0) 
 On line:         repeat($width) {
@@ -95,11 +100,16 @@ Processing line 34:  (bracket depth: 1), False
 Processing line 35:             changeVar($stepsX, 1) # Increment X step (bracket depth: 1), False
 Processing line 36:         } (bracket depth: 0), True
 HERES MY HAUL: ['            # Calculate the X-coordinate for the current column', '            setvar($x, add($xMin, multiply(divide($stepsX, $width), subtract($xMax, $xMin))))', '', '            # Reset variables for the Mandelbrot iteration', '            setvar($zRe, 0)', '            setvar($zIm, 0)', '            setvar($iter, 0)', '            setvar($zMagnitude, 0)', '', '            while(and(lt($iter, $maxIterations), lt($zMagnitude, 4))) {', '                setvar($zReTemp, subtract(multiply($zRe, $zRe), multiply($zIm, $zIm)))', '                setvar($zIm, add(multiply(2, multiply($zRe, $zIm)), $y))', '                setvar($zRe, add($zReTemp, $x))', '                setvar($zMagnitude, add(multiply($zRe, $zRe), multiply($zIm, $zIm))) # Magnitude calculation', '                changeVar($iter, 1)', '            }', '', '            # Determine pixel color', '            if (equals($iter, $maxIterations)) {', '                hexPen("#000000") # Black for points in the set', '            } else {', '                setPen("brightness", multiply(100, divide($iter, $maxIterations))) # Grayscale gradient', '            }', '', '            # Move to the correct position and draw the pixel', '            gotoXY(add(-150, multiply($stepsX, $resolution)), subtract(150, multiply($steps, $resolution)))', '            penDown()', '            move($resolution) # Draw the pixel with adjusted size', '            penUp()', '', '            changeVar($stepsX, 1) # Increment X step']
+Increasing stack height: $xMin at depth: 1 with limit: 0
+Increasing stack height: divide($stepsX,$width) at depth: 2
+Increasing stack height: $stepsX at depth: 3 with limit: 2
 On line:             setvar($x, add($xMin, multiply(divide($stepsX, $width), subtract($xMax, $xMin))))
 On line:             setvar($zRe, 0)
 On line:             setvar($zIm, 0)
 On line:             setvar($iter, 0)
 On line:             setvar($zMagnitude, 0)
+Increasing stack height: lt($iter,$maxIterations) at depth: 1
+Increasing stack height: $iter at depth: 2 with limit: 1
 On line:             while(and(lt($iter, $maxIterations), lt($zMagnitude, 4))) {
 Processing line 10:                 setvar($zReTemp, subtract(multiply($zRe, $zRe), multiply($zIm, $zIm))) (bracket depth: 1), False
 Processing line 11:                 setvar($zIm, add(multiply(2, multiply($zRe, $zIm)), $y)) (bracket depth: 1), False
@@ -108,13 +118,22 @@ Processing line 13:                 setvar($zMagnitude, add(multiply($zRe, $zRe)
 Processing line 14:                 changeVar($iter, 1) (bracket depth: 1), False
 Processing line 15:             } (bracket depth: 0), True
 HERES MY HAUL: ['                setvar($zReTemp, subtract(multiply($zRe, $zRe), multiply($zIm, $zIm)))', '                setvar($zIm, add(multiply(2, multiply($zRe, $zIm)), $y))', '                setvar($zRe, add($zReTemp, $x))', '                setvar($zMagnitude, add(multiply($zRe, $zRe), multiply($zIm, $zIm))) # Magnitude calculation', '                changeVar($iter, 1)']
+Increasing stack height: multiply($zRe,$zRe) at depth: 1
+Increasing stack height: $zRe at depth: 2 with limit: 1
 On line:                 setvar($zReTemp, subtract(multiply($zRe, $zRe), multiply($zIm, $zIm)))
+Increasing stack height: multiply(2,multiply($zRe,$zIm)) at depth: 1
+Increasing stack height: multiply($zRe,$zIm) at depth: 2
+Increasing stack height: $zRe at depth: 3 with limit: 2
 On line:                 setvar($zIm, add(multiply(2, multiply($zRe, $zIm)), $y))
+Increasing stack height: $zReTemp at depth: 1 with limit: 0
 On line:                 setvar($zRe, add($zReTemp, $x))
+Increasing stack height: multiply($zRe,$zRe) at depth: 1
+Increasing stack height: $zRe at depth: 2 with limit: 1
 On line:                 setvar($zMagnitude, add(multiply($zRe, $zRe), multiply($zIm, $zIm))) 
 On line:                 changeVar($iter, 1)
 Substack: scratchtext-72                setvar($zReTemp, subtract(multiply($zRe, $zRe), multiply($zIm, $zIm)))
 while
+Increasing stack height: $iter at depth: 1 with limit: 0
 On line:             if (equals($iter, $maxIterations)) {
 Processing line 19:                 hexPen("#000000") # Black for points in the set (bracket depth: 1), False
 Processing line 20:             } else { (bracket depth: 1), True
@@ -124,9 +143,12 @@ HERES MY HAUL: ['                hexPen("#000000") # Black for points in the set
 !!! Else ['                hexPen("#000000") # Black for points in the set']['                setPen("brightness", multiply(100, divide($iter, $maxIterations))) # Grayscale gradient']
 On line:                 hexPen("#000000") 
 Substack: scratchtext-87                hexPen("#000000") # Black for points in the set
+Increasing stack height: $iter at depth: 2 with limit: 1
 On line:                 setPen("brightness", multiply(100, divide($iter, $maxIterations))) 
 Substack: scratchtext-91                setPen("brightness", multiply(100, divide($iter, $maxIterations))) # Grayscale gradient
 ifelse
+Increasing stack height: multiply($stepsX,$resolution) at depth: 1
+Increasing stack height: $stepsX at depth: 2 with limit: 1
 On line:             gotoXY(add(-150, multiply($stepsX, $resolution)), subtract(150, multiply($steps, $resolution)))
 On line:             penDown()
 On line:             move($resolution) 
