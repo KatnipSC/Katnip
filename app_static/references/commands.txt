@@ -12,12 +12,12 @@
 
 # internal reporters (not meant to be used directly, but the code will use them)
 # NOTE: DO NOT CHANGE THESE NAMES - they are supposed to be static
-goto_menu:motion_goto_menu:reporter:f.to
-glideto_menu:motion_glideto_menu:reporter:f.to
-point_towards_menu:motion_pointtowards_menu:reporter:f.towards
-costume_menu:looks_costume:reporter:f.costume
-backdrop_menu:looks_backdrops:reporter:f.backdrop
-sound_menu:sounds_sounds_menu:reporter:f.sound_menu
+goto_menu:motion_goto_menu:reporter:f.to{_random_;_mouse_;...}
+glideto_menu:motion_glideto_menu:reporter:f.to{_random_;_mouse_;...}
+point_towards_menu:motion_pointtowards_menu:reporter:f.towards{_random_;_mouse_;...}
+costume_menu:looks_costume:reporter:f.costume{...}
+backdrop_menu:looks_backdrops:reporter:f.backdrop{...}
+sound_menu:sound_sounds_menu:reporter:f.sound_menu{...}
 clone_menu:control_create_clone_of_menu:reporter:f.clone_option
 touching_menu:sensing_touchingobjectmenu:reporter:f.touchingobjectmenu
 distance_menu:sensing_distancetomenu:reporter:f.distancetomenu
@@ -31,7 +31,7 @@ turn:motion_turnright:stack:i.degrees
 gotoXY:motion_gotoxy:stack:i.x,i.y
 goto:motion_goto:stack:i.to(goto_menu)
 glideXY:motion_glidesecstoxy:stack:i.secs,i.x,i.y
-glideto:motion_glideto:stack:i.to(glideto_menu)
+glideto:motion_glideto:stack:i.secs,i.to(glideto_menu)
 point:motion_pointindirection:stack:i.direction
 pointTo:motion_pointtowards:stack:i.towards(point_towards_menu)
 changeX:motion_changexby:stack:i.dx
@@ -131,7 +131,7 @@ username:sensing_username:reporter:
 
 # NAME: operators
 # NOTE: Might make these operations standalone:
-#    + - * / mod < > == or and
+#    + - * / % < > == or and
 add:operator_add:reporter:i.num1,i.num2
 subtract:operator_subtract:reporter:i.num1,i.num2
 multiply:operator_multiply:reporter:i.num1,i.num2
@@ -158,17 +158,22 @@ showvar:data_showvariable:stack:f.variable{...}
 hidevar:data_hidevariable:stack:f.variable{...}
 
 # NAME: lists
-listAdd:data_addtolist:stack:i.item,f.list
-listDelete:data_deleteoflist:stack:i.index,f.list
+listAdd:data_addtolist:stack:f.list,i.item
+listDelete:data_deleteoflist:stack:f.list,i.index
 listDeleteAll:data_deletealloflist:stack:f.list
-listInsert:data_insertatlist:stack:stack:i.item,i.index,f.list
-listReplace:data_replaceitemoflist:stack:i.index,f.list,i.item
-getItem:data_itemoflist:reporter:i.index,f.list
-getItemNum:data_itemnumoflist:reporter:i.item,f.list
+listInsert:data_insertatlist:stack:f.list,i.index,i.item
+listReplace:data_replaceitemoflist:stack:f.list,i.index,i.item
+getItem:data_itemoflist:reporter:f.list,i.index
+getItemNum:data_itemnumoflist:reporter:f.list,i.item
 listLength:data_lengthoflist:reporter:f.list
 listContains:data_listcontainsitem:reporter:f.list,i.item
 listShow:data_showlist:stack:f.list
 listHide:data_hidelist:stack:f.list
+
+# NAME: my_blocks
+# NOTE: only proc arguments are listed here because proc calls/defs are processed seperately
+funcargbool:argument_reporter_boolean:reporter:f.value
+funcargexp:argument_reporter_string_number:reporter:f.value
 
 # NAME: pen
 penClear:pen_clear:stack:
@@ -180,3 +185,5 @@ changePen:pen_changePenColorParamBy:stack:i.color_param{color;saturation;brightn
 setPen:pen_setPenColorParamTo:stack:i.color_param(pen_menu),i.value
 changePenSize:pen_changePenSizeBy:stack:i.size
 setPenSize:pen_setPenSizeTo:stack:i.size
+setPenShade:pen_setPenShadeToNumber:stack:i.shade
+changePenShade:pen_changePenShadeBy:stack:i.shade

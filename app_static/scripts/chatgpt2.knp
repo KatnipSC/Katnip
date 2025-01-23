@@ -4,12 +4,10 @@ whenFlag() {
     setfx("ghost", 100) # Hide the sprite to avoid blocking the view, while still allowing it to be 
     clearCounter()
 
-    # Initialize variables
+    # Setup + initialization
     setvar($resolution, 1) # Control the resolution (higher = coarser grid, lower = finer grid)
     setPenSize($resolution) # Adjust the pen size based on resolution
-
     gotoXY(-150, 150) # Start position for drawing (top-left corner)
-
     hexPen("#000000") # Black for points in the set
     setPen("brightness", 100)
     penDown()
@@ -73,4 +71,5 @@ whenFlag() {
 
     penUp()
     timeSay("Mandelbrot Set Complete", 1) # Display the message for 3 seconds
+    stop("this script")
 }

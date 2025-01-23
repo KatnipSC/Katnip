@@ -2,15 +2,17 @@
 Manages commands file
 """
 
+import error_handler
+
 def read_commands() -> list[str]:
     """
     Reads through and gets all the commands from the commands file (and preprocess and returns a neat list of commands)
 
-    Returns:
+    ### Returns:
     - found_commands (list[str]): Cleaned list of commands
     """
 
-    with open("references\commands.txt", "r") as f:
+    with open("app_static\\references\\commands.txt", "r") as f:
         commands = f.readlines()
         found_commands = []
 
@@ -31,10 +33,10 @@ def read_by_opcode(opcode: str) -> dict:
     """
     Returns a dictionary of attributes about a command given its opcode
 
-    Parameters:
+    ### Parameters:
     - opcode (str): OpCode of the command
 
-    Returns:
+    ### Returns:
     - return_dict (dict): Dictionary with command attributes
         - ["name"] (str): Name of the command
         - ["opcode"] (str): OpCode of the command
@@ -50,6 +52,10 @@ def read_by_opcode(opcode: str) -> dict:
     for attribute, value in zip(attributes, command_found[0]):
           return_dict[attribute] = value
 
+    if not return_dict:
+        error_handler.add_error(f"Cmd with opcode: '{opcode}' not found", opcode, -1)
+        error_handler.throw_errors()
+
     return return_dict
 
 def read_by_name(name: str):
@@ -60,10 +66,10 @@ def read_by_name(name: str):
     - type (str): Type of the command
     - inputs (str): Input names of the command (separated by commas)
 
-    Parameters:
+    ### Parameters:
     - name (str): Name of the command (different than opCode)
 
-    Returns:
+    ### Returns:
     - return_dict (dict): Dictionary with command attributes [name,opcode,type,inputs]
     """
     
@@ -78,6 +84,10 @@ def read_by_name(name: str):
     return_dict = {}
     for attribute, value in zip(attributes, command_found[0]):
           return_dict[attribute] = value
+
+    if not name:
+        error_handler.add_error(f"Cmd with opcode: '{name}' not found", name, -1)
+        error_handler.throw_errors()
 
     return return_dict
 
