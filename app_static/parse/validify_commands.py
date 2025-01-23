@@ -3,6 +3,7 @@ Code for validating the commands (ensuring proper formatting and syntax)
 """
 
 import error_handler
+import os
 
 def validify_commands(id):
     """
@@ -19,7 +20,7 @@ def validify_commands(id):
     
     print(f"🔍 - Validating commands...")
 
-    with open("app_static\\references\\commands.txt", "r") as f:
+    with open(os.path.join('app_static', 'references', 'commands.txt'), "r") as f:
         commands = f.readlines() # Read file
 
         # Create list for checking duplicate commands (or parameters)

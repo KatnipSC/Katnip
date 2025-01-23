@@ -1,6 +1,7 @@
 """
 Functions for throwing neat and descriptive errors
 """
+import os
 
 class CmdError(Exception):
     """
@@ -55,6 +56,6 @@ def log(id, message):
     - message (str): The message to log
     """
     
-    with open(f"app_static\generated_projects\{id}\log_{id}.txt", "a", encoding="utf-8") as f:
+    with open(os.path.join('app_static', 'generated_projects', str(id), f"log_{id}.txt"), "a", encoding="utf-8") as f:
         f.write(f"{message}\n")
         f.close()

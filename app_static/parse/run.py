@@ -1,4 +1,4 @@
-import parser
+import app_static.parse.main_parser as main_parser
 
 def translate(code):
     """
@@ -12,7 +12,7 @@ def translate(code):
     ### Returns:
     - filename (str): Scratch .sb3 file for the generated Scratch code
     """
-    project_parser = parser.project()
+    project_parser = main_parser.project()
     project_parser.process_scrtxt(code) # Make this be all items not just 0th
     project_parser.write()
 

@@ -3,6 +3,7 @@ Manages commands file
 """
 
 import error_handler
+import os
 
 def read_commands() -> list[str]:
     """
@@ -12,7 +13,7 @@ def read_commands() -> list[str]:
     - found_commands (list[str]): Cleaned list of commands
     """
 
-    with open("app_static\\references\\commands.txt", "r") as f:
+    with open(os.path.join('app_static', 'references', 'commands.txt'), "r") as f:
         commands = f.readlines()
         found_commands = []
 

@@ -31,8 +31,8 @@ class project():
         # Project specific setup
         self.id = uuid.uuid1() # Unique id for the project
         self.directory = tempfile.mkdtemp()
-        os.mkdir(f"app_static\\generated_projects\\{self.id}")
-        with open(f"app_static\\generated_projects\\{self.id}\\log_{self.id}.txt", "w") as f: # Create log file
+        os.mkdir(os.path.join("app_static", "generated_projects", str(self.id)))
+        with open(os.path.join("app_static", "generated_projects", str(self.id), f"log_{self.id}.txt"), "w") as f: # Create log file
             f.write(f"Log file for project {self.id}\n")
             f.close()
 
@@ -1014,7 +1014,7 @@ class project():
                     if self._check_char(lines[line_num], "}"):
                         bracket_depth -= 1
 
-                    error_handler.log(self.id, f"🥅 - Capturing line [{line_num+1}] for c-block: {lines[line_num]} (bracket depth: {bracket_depth}), {self._check_char(lines[line_num], "}")}")
+                    error_handler.log(self.id, f"🥅 - Capturing line [{line_num+1}] for c-block: {lines[line_num]} (bracket depth: {bracket_depth}), {self._check_char(lines[line_num], '}')}")
 
                     # Check for else block
                     if self._check_else(lines[line_num]): # Else condition found
@@ -1331,11 +1331,11 @@ class project():
     
     def write(self):
         """
-        Writes the current project data to a file. Creates the SB3 file f'app_static\\generated_projects\\program_{self.id}.sb3'
+        Writes the current project data to a file. Creates the SB3 file 'app_static/generated_projects/program_{self.id}.sb3'
         """
 
         # Save json file to output as well (debug only)
-        # with open(f"app_static\\generated_projects\\{self.id}.json", "w") as f:
+        # with open(os.path.join("app_static", "generated_projects", f"{self.id}.json"), "w") as f:
         #     f.write(json.dumps(self.data))
 
         # Add json file to tempdir
@@ -1343,11 +1343,11 @@ class project():
             f.write(json.dumps(self.data))
 
         # Create hierarchy for project
-        with open(f"app_static\\generated_projects\\{self.id}\\hierarchy_{self.id}.txt", "w", encoding="utf-8") as f:
+        with open(os.path.join("app_static", "generated_projects", str(self.id), f"hierarchy_{self.id}.txt"), "w", encoding="utf-8") as f:
             f.write(hierarchy.gen_hierarchy(self.data))
         
         # Zip contents to sb3 folder
-        with zipfile.ZipFile(f'app_static\\generated_projects\\{self.id}\\program_{self.id}.sb3', "w", zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(os.path.join("app_static", "generated_projects", str(self.id), f"program_{self.id}.sb3"), "w", zipfile.ZIP_DEFLATED) as zipf:
             for root, _, files in os.walk(self.directory):
                 for file in files:
                     zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), self.directory))

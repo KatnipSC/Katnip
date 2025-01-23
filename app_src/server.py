@@ -4,10 +4,10 @@ import shutil
 from flask import Flask, request, render_template, jsonify, send_file, after_this_request
 from io import BytesIO
 
-sys.path.append('app_static\\parse\\')
-import parser
+sys.path.append(os.path.join('app_static', 'parse'))
+import main_parser
 
-app = Flask(__name__, static_folder='../app_static', template_folder='../app_templates')
+app = Flask(__name__, static_folder=os.path.join('..', 'app_static'), template_folder=os.path.join('..', 'app_templates'))
 
 @app.route('/')
 def homepage():
@@ -22,7 +22,7 @@ def download_file(id):
     # Create filename
     filename = f"program_{id}.sb3"
     
-    return send_file(os.path.join(f"app_static\\generated_projects\\{id}", filename), as_attachment=True)
+    return send_file(os.path.join('app_static', 'generated_projects', id, filename), as_attachment=True)
 
 @app.route("/projects/<id>")
 def serve_project(id):
@@ -35,13 +35,13 @@ def serve_project(id):
     def clear_files(response):
         """Remove the temporary file after serving."""
         
-        file_path = f"app_static/generated_projects/{id}/"
+        file_path = os.path.join('app_static', 'generated_projects', id)
         shutil.rmtree(file_path)
 
         return response
 
     # Read file into io object to avoid problems with deleting files in use
-    with open(os.path.join(f"app_static/generated_projects/{id}/", filename), "rb") as f:
+    with open(os.path.join('app_static', 'generated_projects', id, filename), "rb") as f:
         file_data = BytesIO(f.read())
 
     return send_file(
@@ -63,7 +63,7 @@ def translate():
                }
     
     # Translate code
-    project_parser = parser.project()
+    project_parser = main_parser.project()
     project_parser.process_scrtxt(code) # Make this be all items not just 0th
     project_parser.write()
     
