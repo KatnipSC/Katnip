@@ -107,7 +107,7 @@ def gen_hierarchy(project_data):
 
     # Iterate over all sprites
     for sprite in project_data["targets"]:
-        hierarchy += f"{sprite["name"]} >\n"
+        hierarchy += f"{sprite['name']} >\n"
         if sprite["blocks"]: # If blocks exist, parse em
             hierarchy += generate_ascii_hierarchy(sprite["blocks"])
 

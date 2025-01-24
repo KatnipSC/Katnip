@@ -293,7 +293,7 @@ class project():
             error_handler.log(self.id, f"🧱🙏 - Procedure '{name}' is being read")
 
         if r"%d" in name or r"%s" in name:
-            error_handler.add_error(f"⁉️🧩 - Invalid function name '{name}' because of string sequence '{r"%d" if r"%d" in name else r"%s"}'", name, self.line)
+            error_handler.add_error(f"⁉️🧩 - Invalid function name '{name}' because of string sequence '{'%d' if '%d' in name else '%s'}'",name,self.line)
             error_handler.throw_errors(self.id)
 
         if not name in self.procedures: # If procedure has not been documented yet:
@@ -782,7 +782,7 @@ class project():
             # Make sure all procedures used were all defined
             for procedure in self.procedures:
                 if not self.procedures[procedure]["defined"]:
-                    error_handler.add_error(f"❓🤷‍♂️ - Procedure '{procedure["name"]}' not defined.", procedure, -1)
+                    error_handler.add_error(f"❓🤷‍♂️ - Procedure '{procedure['name']}' not defined.", procedure, -1)
             error_handler.throw_errors(self.id)
 
             # Processthe sprite's costumes (if given)
@@ -1333,6 +1333,10 @@ class project():
         """
         Writes the current project data to a file. Creates the SB3 file 'app_static/generated_projects/program_{self.id}.sb3'
         """
+        
+        # Create generated projects directory if it does not exist
+        if not os.path.exists(os.path.join("app_static", "generated_projects")):
+            os.mkdir(os.path.join("app_static", "generated_projects"))
 
         # Save json file to output as well (debug only)
         # with open(os.path.join("app_static", "generated_projects", f"{self.id}.json"), "w") as f:
