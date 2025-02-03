@@ -5,3 +5,4 @@ flask==3.0.3
 werkzeug==3.0.3
 svgpathtools==1.6.1
 mutagen==1.47.0
+gunicorn==23.0.0
