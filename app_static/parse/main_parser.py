@@ -31,7 +31,7 @@ class project():
         # Project specific setup
         self.id = uuid.uuid1() # Unique id for the project
         self.directory = tempfile.mkdtemp()
-        os.mkdirs(os.path.join("app_static", "generated_projects", str(self.id)))
+        os.makedirs(os.path.join("app_static", "generated_projects", str(self.id)))
         with open(os.path.join("app_static", "generated_projects", str(self.id), f"log_{self.id}.txt"), "w") as f: # Create log file
             f.write(f"Log file for project {self.id}\n")
             f.close()
