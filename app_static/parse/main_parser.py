@@ -25,6 +25,7 @@ import uuid
 import command_manager
 import error_handler
 import hierarchy
+import font_width
 
 class project():
     def __init__(self):
@@ -1129,9 +1130,7 @@ class project():
 
         for arg in args:
             # Find width of argument using helvitica neue font. If it exceeds a threshold, then add some width
-            font = ImageFont.truetype("app_static\\references\\HelveticaNeue.ttf", 12)
-            width_measurements = font.getbbox(arg if not "a." in arg else arg[2:])
-            width = width_measurements[2] - width_measurements[0]
+            width = font_width.get_width(arg if not "a." in arg else arg[2:])
 
             # Parse argument
             if arg.startswith("$"):
