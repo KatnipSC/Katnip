@@ -64,7 +64,10 @@ def translate():
     
     # Translate code
     project_parser = main_parser.project()
-    project_parser.process_scrtxt(code) # Make this be all items not just 0th
+    try:
+        project_parser.process_scrtxt(code)  # Make this be all items not just 0th
+    except Exception as e:
+        print(f"Error processing code: {e}")
     project_parser.write()
     
     return jsonify({"proj_id": project_parser.id})
