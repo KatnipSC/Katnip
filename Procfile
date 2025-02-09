@@ -1,0 +1,1 @@
+web: gunicorn -w 4 -b 0.0.0.0:8000 app_src.server:app

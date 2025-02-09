@@ -12,50 +12,54 @@ class CmdError(Exception):
         super().__init__(message)
         self.message = message
 
-errors = []
-def add_error(reason: str, relavent_code: str, line_num: int):
+class error_handler:
     """
-    Adds a new error to the global list of errors, formatting it to look nice and consistent
+    Handles errors and error functions related to them
+    """
     
-    ### Parameters:
-    - reason (str): The reason for the error (what is the error)
-    - relavent_code (str): The code snippet where the error occurred
-    - line_num (int): The line number where the error occurred, -1 if not applicable
-    """
+    def __init__(self, id):
+        self.id = id
+        self.errors = []
+        
+    def add_error(self, reason: str, relavent_code: str, line_num: int):
+        """
+        Adds a new error to the global list of errors, formatting it to look nice and consistent
+        
+        ### Parameters:
+        - reason (str): The reason for the error (what is the error)
+        - relavent_code (str): The code snippet where the error occurred
+        - line_num (int): The line number where the error occurred, -1 if not applicable
+        """
 
-    if not line_num == -1:
-        errors.append(f"❌ - {reason} in code '{relavent_code}' on line [{line_num}]")
-    else:
-        errors.append(f"❌ - {reason} in code '{relavent_code}'")
+        if not line_num == -1:
+            self.errors.append(f"❌ - {reason} in code '{relavent_code.strip()}' on line [{line_num}]")
+        else:
+            self.errors.append(f"❌ - {reason} in code '{relavent_code.strip()}'")
 
-def throw_errors(id):
-    """
-    Executes a few things:
-    - Logs all the errors found in the global list
-    - Raises an exception if any errors were found
+    def throw_errors(self):
+        """
+        Executes a few things:
+        - Logs all the errors found in the global list
+        - Raises an exception if any errors were found
+        """
+        
+        if self.errors:
+            for error in self.errors:
+                self.log(error)
+            total_errors = len(self.errors)
+            self.errors.clear()
 
-    ### Parameters:
-    - id (str): The id of the file to log into
-    """
-    
-    if errors:
-        for error in errors:
-            log(id, error)
-        total_errors = len(errors)
-        errors.clear()
-
-        log(id, f"🛑 - [{total_errors}] invalid commands found. See above for details.")
-        raise CmdError(f"[{total_errors}] invalid commands found. See log for details.")
-    
-def log(id, message):
-    """
-    Logs a message to the "logs.txt file"
-    
-    ### Parameters:
-    - id (str): The id of the file to log into
-    - message (str): The message to log
-    """
-    
-    with open(os.path.join('app_static', 'generated_projects', str(id), f"log_{id}.txt"), "a", encoding="utf-8") as f:
-        f.write(f"{message}\n")
-        f.close()
+            self.log(f"🛑 - [{total_errors}] invalid commands found. See above for details.")
+            raise CmdError(f"[{total_errors}] invalid commands found. See log for details.")
+        
+    def log(self, message: str):
+        """
+        Logs a message to the "logs.txt file"
+        
+        ### Parameters:
+        - message (str): The message to log
+        """
+        
+        with open(os.path.join('app_static', 'generated_projects', str(self.id), f"log_{self.id}.txt"), "a", encoding="utf-8") as f:
+            f.write(f"{message}\n")
+            f.close()

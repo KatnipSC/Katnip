@@ -1,0 +1,19 @@
+setup(){
+    sys.import("kewl.png")
+}
+
+func: thingy(warp=true, times[exp]){
+    control.repeat(a.times){
+        motion.move(a.times)
+    }
+}
+
+events.onflag(){
+    control.for($hi, 9){
+        looks.say("hello") # o no
+    }
+}
+
+control.clone.onstart(){
+    motion.move(2)
+}

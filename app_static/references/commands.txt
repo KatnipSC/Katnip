@@ -152,10 +152,10 @@ round:operator_round:reporter:i.num
 mathop:operator_mathop:reporter:f.operator{abs;floor;ceiling;sqrt;sin;cos;tan;asin;acos;atan;ln;log;e ^;10 ^},i.num
 
 # NAME: variables
-setvar:data_setvariableto:stack:f.variable{...},i.value
-changevar:data_changevariableby:stack:f.variable{...},i.value
-showvar:data_showvariable:stack:f.variable{...}
-hidevar:data_hidevariable:stack:f.variable{...}
+var.set:data_setvariableto:stack:f.variable{...},i.value
+var.change:data_changevariableby:stack:f.variable{...},i.value
+var.show:data_showvariable:stack:f.variable{...}
+var.hide:data_hidevariable:stack:f.variable{...}
 
 # NAME: lists
 listAdd:data_addtolist:stack:f.list,i.item

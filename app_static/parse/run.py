@@ -1,4 +1,4 @@
-import app_static.parse.main_parser as main_parser
+import main_parser
 
 def translate(code):
     """
@@ -19,7 +19,7 @@ def translate(code):
     #appUi.open_sb3_TW(project_file) uncomment this line if you are running this locally to open with turbowarp
     return f'program_{project_parser.id}.sb3'
 
-with open("app_static\\scripts\\procedures2.knp", "r") as f:
+with open("app_static\\scripts\\illegal.knp", "r") as f:
     code = f.read()
     f.close()
 
