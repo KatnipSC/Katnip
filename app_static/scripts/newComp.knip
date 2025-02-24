@@ -1,0 +1,5 @@
+events.onflag(){
+    control.if($var == "hello"){
+        looks.say("o") 
+    }
+}

@@ -66,17 +66,17 @@ def _content_aware_split(text, selection):
     else:
         return [text]
                 
-def _content_aware_check(text, char):
+def _content_aware_check(text, selection):
     """
-    Checks if the text contains a specific character.
-    It will make sure that the character is not within a string.
+    Checks if the text contains a specific selection.
+    It will make sure that the selection is not within a string.
 
     ### Parameters:
-    - text (str): The text to check for the character
-    - char (str): The character to look for
+    - text (str): The text to check for the selection
+    - char (str): The selection to look for
 
     ### Returns:
-    - bool: True if the character is found in the text, False otherwise
+    - bool: True if the selection is found in the text, False otherwise
     """
 
     text = _extract_comment(text)[0]
@@ -85,8 +85,9 @@ def _content_aware_check(text, char):
     for idx, letter in enumerate(text):
         if letter == '"' and not text[idx-1] == "\\":
             depth *= -1
-        if letter == char and depth == 1:
-            return True
+        if letter == selection[0] and depth == 1:
+            if text[idx:idx+len(selection)] == selection:
+                return True
     return False
     
 def _extract(string: str):
@@ -109,18 +110,21 @@ def _extract(string: str):
     args_string = string[string.find("(") + 1 : string.rfind(")")]
     args = []
     current_arg: list[str] = []
-    depth = 0  # To track nested parentheses
+    paren_depth = 0  # To track nested parentheses
+    quote_depth = False # To track nested quotes
 
     for char in args_string:
-        if char == "," and depth == 0:
+        if char == "," and paren_depth == 0 and not quote_depth:
             # If not within parentheses, this is a separator
             args.append("".join(current_arg).strip())
             current_arg = []
         else:
             if char == "(":
-                depth += 1
+                paren_depth += 1
             elif char == ")":
-                depth -= 1
+                paren_depth -= 1
+            elif char == '"':
+                quote_depth = not quote_depth
             current_arg.append(char)
 
     # Add the last argument if it exists

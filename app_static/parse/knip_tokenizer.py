@@ -1,8 +1,15 @@
-"""The main file for tokenizing KNIP files"""
+"""
+This file is responsible for tokenizing the input code.
+
+Responsibilities include:
+- Tokenizing the input code
+- Indentifying token type
+- Basic deconstruction of the code
+"""
 
 # Custom modules
 import error_handler
-import knp_tools as tools
+import knip_tools as tools
 
 class tokenizer:
     """Tokenizes KNIP file contents"""
@@ -22,7 +29,18 @@ class tokenizer:
         
         self.error_handler = error_handler.error_handler(project_id)
 
-    
+    def _is_reporter(self, arg: str) -> bool:
+        """
+        Checks if the argument is a reporter.
+        
+        ### Parameters:
+        - arg (str): The argument to check
+        
+        ### Returns:
+        - bool: True if the argument is a reporter, False otherwise
+        """
+        return "(" in arg and ")" in arg and not arg.startswith("(")
+
     def _tokenize_args(self, args: list):
         """
         Tokenizes the arguments of a function into a dictionary
@@ -31,6 +49,15 @@ class tokenizer:
         ### Parameters:
         - args (list): List of arguments to tokenize
         """
+        
+        operator_tiers = [{"!": "op.not"},
+                          {"^": "op.pow"}, # Note: ^ is not a valid operator in knip
+                          {"*": "op.multiply", "/": "op.divide", "%": "op.mod"},
+                          {"+": "op.add", "-": "op.subtract"},
+                          {"<": "op.lt", ">": "op.gt", "<=": "op.lte", ">=": "op.gte"}, # Note: <= and >= are not valid operators in knip
+                          {"==": "op.equals", "!=": "op.neq"}, # Note: != is not a valid operator in knip
+                          {"&": "op.and"},
+                          {"||": "op.or"}]
 
         for arg in args:
             # Find argument details
@@ -47,9 +74,41 @@ class tokenizer:
                         "type": argType,
                         "value": argValue
                     })
+            
+            # NOTE: duplicated instances of operators makes this fail
+            # NOTE: left to right handling is not implemented. precedence is still by tier order
+            # Split argument into parts if it contains operator symbols
+            for tier in operator_tiers:
+                for symbol, path in tier.items():
+                    if tools._content_aware_check(arg, symbol): # If the symbol is in the argument
+                        arg1, arg2 = arg.split(symbol) # Split the argument into two parts
+                        
+                        # Process argument
+                        self._tokenize_args([arg1])
+                        self.tokens.append({
+                            "name": "function",
+                            "value": path
+                        })
+                        self._tokenize_args([arg2])
+                        return
 
             # Parse argument
-            if arg.startswith("$"):
+            if self._is_reporter(arg):
+                # Cut up the reporter
+                func_pieces = tools._extract(arg)
+                argValue = func_pieces["name"]
+                argName = "reporter"
+                _add_token()
+                
+                # Tokenize the arguments of the reporter
+                self.tokens.append({"name": "lparen", "type": None, "value": "("}) # Add the left parenthesis
+                self._tokenize_args(func_pieces["args"])
+                self.tokens.append({"name": "rparen", "type": None, "value": ")"}) # Add the right parenthesis
+            elif arg.startswith("(") and arg.endswith(")"):
+                # Handle grouped argument
+                grouped_arg = arg[1:-1]
+                self._tokenize_args([grouped_arg])
+            elif arg.startswith("$"):
                 argValue = arg[1:]
                 argType = "variable"
                 _add_token()
@@ -81,17 +140,6 @@ class tokenizer:
                 argValue = {"kwarg": arg.split("=")[0], "value": arg.split("=")[1]}
                 argType = "kwarg"
                 _add_token()
-            elif "(" in arg and ")" in arg:
-                # Cut up the reporter
-                func_pieces = tools._extract(arg)
-                argValue = func_pieces["name"]
-                argName = "reporter"
-                _add_token()
-                
-                # Tokenize the arguments of the reporter
-                self.tokens.append({"name": "lparen", "type": None, "value": "("}) # Add the left parenthesis
-                self._tokenize_args(func_pieces["args"])
-                self.tokens.append({"name": "rparen", "type": None, "value": ")"}) # Add the right parenthesis
             else:
                 self.error_handler.add_error("Invalid argument type", arg, self.line)
 
@@ -119,11 +167,6 @@ class tokenizer:
             return {
                 "name": "functionDef",
                 "value": name[5:]
-            }
-        elif name.startswith("sys."):
-            return {
-                "name": "system",
-                "value": name[4:]
             }
         elif name == "{":
             return {
@@ -170,6 +213,9 @@ class tokenizer:
         # Add function to list
         self.tokens.append(self._identify_function(pieces["name"]))
         
+        if pieces["name"] in ["{", "}"]:
+            return
+        
         # Parse arguments if exist
         self.tokens.append({"name": "lparen", "type": None, "value": "("})
         if pieces["args"]:
@@ -185,13 +231,27 @@ class tokenizer:
             })
             
         # Check for anything after the command
-        if pieces["after"] == "{":
+        if "->" in pieces["after"]:
+            # Get return type
+            returnType = ""
+            if "{" in pieces["after"]:
+                returnType = pieces["after"].split("->")[1].split("{")[0].strip()
+            else:
+                returnType = pieces["after"].split("->")[1].strip()
+                
+            self.tokens.append({
+                "name": "funcType",
+                "type": returnType,
+                "value": "->"
+            })
+        
+        if "{" in pieces["after"]:
             self.tokens.append({
                 "name": "lcurly",
                 "type": None,
                 "value": "{"
             })
-        elif pieces["after"] == "}":
+        elif "}" in pieces["after"]:
             self.tokens.append({
                 "name": "rcurly",
                 "type": None,
@@ -230,7 +290,7 @@ class tokenizer:
         return self.tokens
     
 new_tokenizer = tokenizer(0)
-with open("app_static\\scripts\\illegal.knp", "r") as f:
+with open("app_static\\scripts\\newComp.knip", "r") as f:
     code = f.read()
     print(new_tokenizer.tokenize(code))
     f.close()

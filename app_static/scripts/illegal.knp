@@ -1,17 +1,32 @@
-setup(){
+sys.setup(){
     sys.import("kewl.png")
+    sys.import("exponent.knip")
 }
 
-func: thingy(warp=true, times[exp]){
+func: thingy(warp=true, times[exp]) -> void {
     control.repeat(a.times){
         motion.move(a.times)
     }
+}
+
+# sys.create() methods only work underneath hat blocks
+func: randWord(warp=false, len[exp]) -> str {
+    sys.create("private", $word, "")
+    sys.create("private", $letter, "")
+
+    control.repeat(a.len){
+        var.set($letter, list.get(@l:letters, op.random(1,10)))
+        var.set($word, $word + $letter)
+    }
+
+    return($word)
 }
 
 events.onflag(){
     control.for($hi, 9){
         looks.say("hello") # o no
     }
+    fn.thingy(8)
 }
 
 control.clone.onstart(){
