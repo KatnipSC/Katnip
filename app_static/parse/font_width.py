@@ -6,10 +6,10 @@ def get_width(text):
     """
     Returns the width of the text in pixels
     
-    ### Parameters:
-    - text (str): The text to measure
+    Args:
+      text (str): The text to measure
     
-    ### Returns:
-    - int: The width of the text in pixels
+    Returns:
+      int: The width of the text in pixels
     """
     return sum(widths.get(char, 0) for char in text)

@@ -1,0 +1,6 @@
+{
+    "operatorPower": {
+        "lenThreshold": 25,
+        "iterationThreshold": 3
+    }
+}

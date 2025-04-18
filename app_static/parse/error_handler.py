@@ -1,7 +1,13 @@
 """
 Functions for throwing neat and descriptive errors
 """
+# Standard Library
+from typing import Optional, List, TypedDict
 import os
+
+# Third Party
+
+# Local
 
 class CmdError(Exception):
     """
@@ -12,7 +18,7 @@ class CmdError(Exception):
         super().__init__(message)
         self.message = message
 
-class error_handler:
+class Error_handler:
     """
     Handles errors and error functions related to them
     """
@@ -25,10 +31,10 @@ class error_handler:
         """
         Adds a new error to the global list of errors, formatting it to look nice and consistent
         
-        ### Parameters:
-        - reason (str): The reason for the error (what is the error)
-        - relavent_code (str): The code snippet where the error occurred
-        - line_num (int): The line number where the error occurred, -1 if not applicable
+        Args:
+          reason (str): The reason for the error (what is the error)
+          relavent_code (str): The code snippet where the error occurred
+          line_num (int): The line number where the error occurred, -1 if not applicable
         """
 
         if not line_num == -1:
@@ -39,8 +45,8 @@ class error_handler:
     def throw_errors(self):
         """
         Executes a few things:
-        - Logs all the errors found in the global list
-        - Raises an exception if any errors were found
+          Logs all the errors found in the global list
+          Raises an exception if any errors were found
         """
         
         if self.errors:
@@ -56,8 +62,8 @@ class error_handler:
         """
         Logs a message to the "logs.txt file"
         
-        ### Parameters:
-        - message (str): The message to log
+        Args:
+          message (str): The message to log
         """
         
         with open(os.path.join('app_static', 'generated_projects', str(self.id), f"log_{self.id}.txt"), "a", encoding="utf-8") as f:

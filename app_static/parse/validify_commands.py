@@ -14,8 +14,8 @@ def validify_commands(id):
     3. Checks if there are duplicate commands (or parameters)
     4. Throws an error if invalid commands exist
 
-    ### Parameters:
-    - id (str): The id of the log file to write potential errors to
+    Args:
+      id (str): The id of the log file to write potential errors to
     """
     
     print(f"🔍 - Validating commands...")

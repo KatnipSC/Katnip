@@ -57,7 +57,7 @@ class project():
         self.monitors = list() # List of all monitors (variable/list monitors)
 
         # Project json setup
-        self.data = {"targets": [],"monitors":[], "extensions": ["pen"], "meta": {"semver": "3.0.0", "vm": "5.0.40", "agent": "", "platform": {"name": "Katnip", "url": "https://github.com/B1j2754/Katnip"}}} # TODO: change link to be the hosted ScratchText's website
+        self.data = {"targets": [],"monitors":[], "extensions": ["pen"], "meta": {"semver": "3.0.0", "vm": "5.0.40", "agent": "", "platform": {"name": "Katnip", "url": "https://katnip.org"}}} # TODO: change link to be the hosted ScratchText's website
         # Add stage to the project
         self.data["targets"].append({"isStage": True,
                                      "name": "Stage",
@@ -98,13 +98,13 @@ class project():
         """
         Extracts name and arguments from a string (a line containing a function).
 
-        ### Parameters:
-        - string (str): The string of the line containing the relavent function
+        Args:
+          string (str): The string of the line containing the relavent function
 
-        ### Returns:
-        - pieces (dict): A dictionary containing the name and arguments of the function
-            - ["name"] (str): The name of the function
-            - ["args"] (list): A list of arguments for the function
+        Returns:
+          pieces (dict): A dictionary containing the name and arguments of the function
+              ["name"] (str): The name of the function
+              ["args"] (list): A list of arguments for the function
         """
 
         pieces = {}
@@ -139,11 +139,11 @@ class project():
         """
         Removes whitespace from the text, ignoring any whitespace inside quotes (strings)
 
-        ### Parameters:
-        - text (str): The text to remove whitespace from
+        Args:
+          text (str): The text to remove whitespace from
 
-        ### Returns:
-        - str: The text with whitespace removed, ignoring quotes
+        Returns:
+          str: The text with whitespace removed, ignoring quotes
         """
         depth = 1
         return_text = ''
@@ -160,11 +160,11 @@ class project():
         """
         Checks if a given value is a valid number. (only allows characters in "-.0123456789")
 
-        ### Parameters:
-        - value (str): The value to check
+        Args:
+          value (str): The value to check
 
-        ### Returns:
-        - bool: True if the value is a valid number, False otherwise
+        Returns:
+          bool: True if the value is a valid number, False otherwise
         """
 
         if len(value) == 0:
@@ -178,12 +178,12 @@ class project():
         """
         Generates a unique ID. This can be for anything needing an ID.
 
-        ### Parameters:
-        - arg (str | None): optional, is added to the unique ID's name to denote certain aspects.
+        Args:
+          arg (str | None): optional, is added to the unique ID's name to denote certain aspects.
             (e.g. "var" or "broadcast", etc.)
 
-        ### Returns:
-        - str: The unique ID
+        Returns:
+          str: The unique ID
         """
 
         if not arg:
@@ -200,18 +200,18 @@ class project():
         """
         Returns the id of a variable. Creates the variable + monitor if it does not exist.
 
-        ### Parameters:
-        - name (str): The name of the variable
+        Args:
+          name (str): The name of the variable
 
-        ### Returns:
-        - str: The id of the variable
+        Returns:
+          str: The id of the variable
         """
 
         if not name in self.variables:
             self.variables[name] = self._generate_id(arg="var")
             self.monitors.append({
                 "id": self.variables[name],
-                "mode": "default",
+                "mode": "default", # "default", "large", or "slider"
                 "opcode": "data_variable",
                 "params": {"VARIABLE": name},
                 "spriteName": None,
@@ -223,7 +223,7 @@ class project():
                 "visible": False,
                 "sliderMin": 0,
                 "sliderMax": 100,
-                "isDescrete": True
+                "isDiscrete": True
             })
         return self.variables[name]
     
@@ -231,11 +231,11 @@ class project():
         """
         Returns the id of a list. Creates the list if it does not exist.
 
-        ### Parameters:
-        - name (str): The name of the list
+        Args:
+          name (str): The name of the list
 
-        ### Returns:
-        - str: The id of the list
+        Returns:
+          str: The id of the list
         """
 
         if not name in self.lists:
@@ -246,11 +246,11 @@ class project():
         """
         Returns the id of a broadcast. Creates the broadcast if it does not exist.
 
-        ### Parameters:
-        - name (str): The name of the broadcast
+        Args:
+          name (str): The name of the broadcast
 
-        ### Returns:
-        - str: The id of the broadcast
+        Returns:
+          str: The id of the broadcast
         """
 
         if not name in self.broadcasts:
@@ -266,26 +266,26 @@ class project():
         or
         _read_procedure("myProcedure")
         
-        ### Parameters:
-        - name (str): The procedure name to be created/read
-        - args (list): (optional) The arguments for the procedure containing dictionaries for arguments:
-            - arg (dict): The arguments for the procedure
-                - arg["name"]: The name for the argument
-                - arg["type"]: The type of the argument (bool, or exp)
-        - warp = "false": (optional) Whether the procedure is a warp procedure or not
-        - definition (bool): (optional) Whether the procedure is being defined or not (allows func to be used before definition)
-        - call_args (dict): (optional) The arguments for the procedure if a promise is required (i.e. procedure has not been defined yet)
-            - call_args["id"] (str): (optional) The id for the procedure call block to update
-            - call_args["arg_vals" (dict): (optional) The arguments for the procedure call block (if needed for a procedure promise)
+        Args:
+          name (str): The procedure name to be created/read
+          args (list): (optional) The arguments for the procedure containing dictionaries for arguments:
+              arg (dict): The arguments for the procedure
+                  arg["name"]: The name for the argument
+                  arg["type"]: The type of the argument (bool, or exp)
+          warp = "false": (optional) Whether the procedure is a warp procedure or not
+          definition (bool): (optional) Whether the procedure is being defined or not (allows func to be used before definition)
+          call_args (dict): (optional) The arguments for the procedure if a promise is required (i.e. procedure has not been defined yet)
+              call_args["id"] (str): (optional) The id for the procedure call block to update
+              call_args["arg_vals" (dict): (optional) The arguments for the procedure call block (if needed for a procedure promise)
 
-        ### Returns:
-        - details (dict): The details of the procedure
-            - details["defined"]: Whether the procedure is defined or not
-            - details["proccode"]: The code for the procedure
-            - details["argumentids"]: The ids of the arguments for the procedure
-            - details["argumentnames"]: The names of the arguments for the procedure
-            - details["argumenttypes"]: The types of the arguments for the procedure
-            - details["warp"]: Whether the procedure is a warp procedure or not
+        Returns:
+          details (dict): The details of the procedure
+              details["defined"]: Whether the procedure is defined or not
+              details["proccode"]: The code for the procedure
+              details["argumentids"]: The ids of the arguments for the procedure
+              details["argumentnames"]: The names of the arguments for the procedure
+              details["argumenttypes"]: The types of the arguments for the procedure
+              details["warp"]: Whether the procedure is a warp procedure or not
         """
         
         if definition:
@@ -395,10 +395,10 @@ class project():
         """
         Process a procedure definition
 
-        ### Parameters:
-        - name (str): The name of the procedure to be defined
-        - args (list): The arguments for the procedure
-        - comment (str): The comment for the procedure
+        Args:
+          name (str): The name of the procedure to be defined
+          args (list): The arguments for the procedure
+          comment (str): The comment for the procedure
         """
         
         # Log procDef call
@@ -495,11 +495,11 @@ class project():
         """
         Process a procedure call
 
-        ### Parameters:
-        - name (str): The name of the procedure to be called
-        - args (list): The arguments for the procedure
-        - comment (str): The comment for the procedure
-        - prev_block_id (str): The previous block's id
+        Args:
+          name (str): The name of the procedure to be called
+          args (list): The arguments for the procedure
+          comment (str): The comment for the procedure
+          prev_block_id (str): The previous block's id
         """
 
         processed_args = [] # Processed arguments
@@ -564,13 +564,13 @@ class project():
         """
         Returns the id of a comment. Creates the comment if it does not exist
 
-        ### Parameters:
-        - comment (str): The comment to add
-        - block_id (str): The id of the block that the comment is attached to
-        - height (int | None): The y-position of the comment, defaults to self.stack_height
+        Args:
+          comment (str): The comment to add
+          block_id (str): The id of the block that the comment is attached to
+          height (int | None): The y-position of the comment, defaults to self.stack_height
 
-        ### Returns:
-        - str: The id of the comment
+        Returns:
+          str: The id of the comment
         """
 
         offset = 15 # There is an offset between the middle of the block, and where the comment connects to the block
@@ -590,13 +590,13 @@ class project():
         """
         Seperates the comment from the line of code and returns a tuple containing both.
 
-        ### Parameters:
-        - text (str): The line of code containing a comment
+        Args:
+          text (str): The line of code containing a comment
 
-        ### Returns:
-        - line (tuple): The two split pieces of the line:
-            - code (str): The line of code
-            - comment (str): The comment
+        Returns:
+          line (tuple): The two split pieces of the line:
+              code (str): The line of code
+              comment (str): The comment
         """
 
         comment_start = -1
@@ -618,11 +618,11 @@ class project():
         Checks if the line has an else statement in it.
         It will set self.else_clause to the resulting boolean argument (true/false)
 
-        ### Parameters:
-        - line (str): The line of code to check for an else statement
+        Args:
+          line (str): The line of code to check for an else statement
 
-        ### Returns:
-        - bool: True if the line contains an else statement, False otherwise
+        Returns:
+          bool: True if the line contains an else statement, False otherwise
         """
 
         line = self._extract_comment(line)[0]
@@ -641,12 +641,12 @@ class project():
         Checks if the line contains a specific character.
         It will make sure that the character is not within a string.
 
-        ### Parameters:
-        - line (str): The line of code to check for the character
-        - char (str): The character to look for
+        Args:
+          line (str): The line of code to check for the character
+          char (str): The character to look for
 
-        ### Returns:
-        - bool: True if the character is found in the line, False otherwise
+        Returns:
+          bool: True if the character is found in the line, False otherwise
         """
 
         line = self._extract_comment(line)[0]
@@ -663,13 +663,13 @@ class project():
         """
         Gets the WAV file data from the specified path.
 
-        ### Parameters:
-        - filepath (str): The path to the WAV file
+        Args:
+          filepath (str): The path to the WAV file
 
-        ### Returns:
-        - data (tuple): The WAV file data
-            - data[0]: Sample count
-            - data[1]: Sample rate
+        Returns:
+          data (tuple): The WAV file data
+              data[0]: Sample count
+              data[1]: Sample rate
         """
 
         with wave.open(filepath, 'rb') as wav_file:
@@ -685,13 +685,13 @@ class project():
         """
         Gets the MP3 file data from the specified path.
 
-        ### Parameters:
-        - filepath (str): The path to the MP3 file
+        Args:
+          filepath (str): The path to the MP3 file
 
-        ### Returns:
-        - data (tuple): The MP3 file data
-            - data[0]: Sample count
-            - data[1]: Sample rate
+        Returns:
+          data (tuple): The MP3 file data
+              data[0]: Sample count
+              data[1]: Sample rate
         """
 
         audio = MP3(filepath)
@@ -705,9 +705,9 @@ class project():
         """
         Saves the data url to the specified path.
 
-        ### Parameters:
-        - data_url (str): The URL of the data to be saved
-        - path (str): The path where the data should be saved
+        Args:
+          data_url (str): The URL of the data to be saved
+          path (str): The path where the data should be saved
         """
 
         # Extract stuff from the data url
@@ -763,11 +763,11 @@ class project():
         """
         Gets the index for a target in targets.
 
-        ### Parameters:
-        - name (str): The name of the target to get
+        Args:
+          name (str): The name of the target to get
 
-        ### Returns:
-        - idx (int): The index of the target in targets
+        Returns:
+          idx (int): The index of the target in targets
         """
 
         return [idx for idx, sprite in enumerate(self.data["targets"]) if sprite["name"] == name][0]
@@ -776,11 +776,11 @@ class project():
         """
         Parses the Scrtxt content and adds it to the program.
 
-        ### Parameters:
-        - content (dict): The Scrtxt content to be parsed {spriteName: content, sprite2Name: content, etc.}
-            - content[0] (str): The code for the sprite
-            - content[1] (list): The costumes for the sprite [[name,dataUrl],[name,dataUrl]]
-            - content[2] (list): The sounds for the sprite [[name,dataUrl],[name,dataUrl]]
+        Args:
+          content (dict): The Scrtxt content to be parsed {spriteName: content, sprite2Name: content, etc.}
+              content[0] (str): The code for the sprite
+              content[1] (list): The costumes for the sprite [[name,dataUrl],[name,dataUrl]]
+              content[2] (list): The sounds for the sprite [[name,dataUrl],[name,dataUrl]]
         """
 
         for sprite_name, sprite_content in content.items():
@@ -856,9 +856,9 @@ class project():
         """
         Adds sprite scripts to the specified target, parsing through program.
 
-        ### Parameters:
-        - target (str): The name of the target (e.g. "S1" or "Sprite1" or "Stage")
-        - program (str | list): The program to parse and add to the target
+        Args:
+          target (str): The name of the target (e.g. "S1" or "Sprite1" or "Stage")
+          program (str | list): The program to parse and add to the target
         """
 
         # Parse through the program
@@ -875,13 +875,13 @@ class project():
         Parses the given lines and adds them to self.target (current target)
             Will return a string ID of the topmost block if it is a substack for provessing substacks
 
-        ### Parameters:
-        - lines (list): The list of lines to parse
-        - substack (bool): Whether this is a substack (used for parsing nested c blocks)
-        - depth (int): The current depth of the parsing (used for indented c blocks)
+        Args:
+          lines (list): The list of lines to parse
+          substack (bool): Whether this is a substack (used for parsing nested c blocks)
+          depth (int): The current depth of the parsing (used for indented c blocks)
 
-        ### Returns:
-        - top_id (str | None): The ID of the topmost block [IF] it is a substack for processing substacks
+        Returns:
+          top_id (str | None): The ID of the topmost block [IF] it is a substack for processing substacks
         """
 
         prev_block = []
@@ -1115,12 +1115,12 @@ class project():
         """
         Simplifies the arguments, parsing through recursively.
 
-        ### Parameters:
-        - args (list | str): The list of arguments to simplify
-        - itr (int): Internal counter for recursion of reporters
+        Args:
+          args (list | str): The list of arguments to simplify
+          itr (int): Internal counter for recursion of reporters
 
-        ### Returns:
-        - return_args (list): The simplified list of arguments (2D array)
+        Returns:
+          return_args (list): The simplified list of arguments (2D array)
             List of [type, relavent_data] for each argument
         """
 
@@ -1208,19 +1208,20 @@ class project():
         """
         Creates a new block given its name and arguments
 
-        ### Parameters:
-        - name (str): The name of the block
-        - args (list): The arguments for the block
-        - prev (list): The previous block (if any)
-            - [0]: The previous block's id
-            - [1]: The previous block's data
-        - comment (list | None): The comment for the block
-            - [0]: The comment for the block
-            - [1]: The height at which to place the block
+        Args:
+          name (str): The name of the block
+          args (list): The arguments for the block
+          prev (list): The previous block (if any)
+              [0]: The previous block's id
+              [1]: The previous block's data
+          comment (list | None): The comment for the block
+              [0]: The comment for the block
+              [1]: The height at which to place the block
         
-        ### Returns:
-        - block_id (str): The ID of the block
-        - block (dict): The created block
+        Returns:
+          tuple:
+          - block_id (str): The ID of the block
+          - block (dict): The created block
             - ["opcode"]: The opcode of the block
             - ["parent"]: The ID of the parent block
             - ["next"]: The ID of the next block

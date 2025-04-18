@@ -96,11 +96,11 @@ def gen_hierarchy(project_data):
     """
     Generate ASCII hierarchy from Scratch 3 project data.
     
-    ### Parameters:
-    - project_data (dict): Scratch 3 project data
+    Args:
+      project_data (dict): Scratch 3 project data
 
-    ### Returns:
-    - hierarchy (str): ASCII hierarchy of the project data
+    Returns:
+      hierarchy (str): ASCII hierarchy of the project data
     """
 
     hierarchy = ""

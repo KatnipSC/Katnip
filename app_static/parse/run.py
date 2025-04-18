@@ -4,13 +4,13 @@ def translate(code):
     """
     Translates the given Scratch code into a Scratch 3 project
 
-    ### Parameters:
-    - code (dict): Scratch code to be translated
-        - code["SpriteName"]: Name of the Scratch sprite
-            - Sprite attributes (list): Code, Costumes, Sounds
+    Args:
+      code (dict): Scratch code to be translated
+          code["SpriteName"]: Name of the Scratch sprite
+              Sprite attributes (list): Code, Costumes, Sounds
 
-    ### Returns:
-    - filename (str): Scratch .sb3 file for the generated Scratch code
+    Returns:
+      filename (str): Scratch .sb3 file for the generated Scratch code
     """
     project_parser = main_parser.project()
     project_parser.process_scrtxt(code) # Make this be all items not just 0th

@@ -8,13 +8,13 @@ def _content_aware_replace(text, selection, replacement):
         Checks if the line contains a specific character.
         It will make sure that the character is not within a string.
 
-        ### Parameters:
-        - text (str): The text to check
-        - selection (str): The selection to check for
-        - replacement (str): The replacement for the selection
+        Args:
+          text (str): The text to check
+          selection (str): The selection to check for
+          replacement (str): The replacement for the selection
 
-        ### Returns:
-        - replacement (str): The text with the selection replaced
+        Returns:
+          replacement (str): The text with the selection replaced
         """
 
         noCommentText = _extract_comment(text)[0]
@@ -23,7 +23,7 @@ def _content_aware_replace(text, selection, replacement):
 
         depth = 1
         for idx, char in enumerate(noCommentText):
-            if char == '"' and not noCommentText[idx-1] == "\\":
+            if char == '"' and not (noCommentText[idx-1] == "\\" and not noCommentText[idx-2] == "\\"):
                 depth *= -1
             if char == selection[0] and depth == 1:
                 if noCommentText[idx:idx+len(selection)] == selection:
@@ -40,12 +40,12 @@ def _content_aware_split(text, selection):
     """
     Splits the text by the selection, but only if the selection is not within a string.
 
-    ### Parameters:
-    - text (str): The text to split
-    - selection (str): The selection to split by
+    Args:
+      text (str): The text to split
+      selection (str): The selection to split by
 
-    ### Returns:
-    - split (list): The split text
+    Returns:
+      split (list): The split text
     """
 
     selectionLen = len(selection)
@@ -54,7 +54,7 @@ def _content_aware_split(text, selection):
     depth = 1
     prev_end = 0
     for idx, char in enumerate(text):
-        if char == '"' and not text[idx-1] == "\\":
+        if char == '"' and not (text[idx-1] == "\\" and not text[idx-2] == "\\"):
             depth *= -1
         if char == selection[0] and depth == 1:
             if text[idx:idx+len(selection)] == selection:
@@ -71,37 +71,91 @@ def _content_aware_check(text, selection):
     Checks if the text contains a specific selection.
     It will make sure that the selection is not within a string.
 
-    ### Parameters:
-    - text (str): The text to check for the selection
-    - char (str): The selection to look for
+    Args:
+      text (str): The text to check for the selection
+      char (str): The selection to look for
 
-    ### Returns:
-    - bool: True if the selection is found in the text, False otherwise
+    Returns:
+      bool: True if the selection is found in the text, False otherwise
     """
 
     text = _extract_comment(text)[0]
 
     depth = 1
     for idx, letter in enumerate(text):
-        if letter == '"' and not text[idx-1] == "\\":
+        if letter == '"' and not (text[idx-1] == "\\" and not text[idx-2] == "\\"):
             depth *= -1
         if letter == selection[0] and depth == 1:
             if text[idx:idx+len(selection)] == selection:
                 return True
     return False
+
+def _get_nth_occurence(text, selection, n):
+    """
+    Gets the nth occurence of a selection in a string.
+    Returns -1 if none found
+
+    Args:
+      text (str): The text to search
+      selection (str): The selection to search for
+      n (int): The nth occurence to find
+    
+    Returns:
+      idx (int): The index of the nth occurence of selection
+    """
+    
+    occurences = 0 # Store occurences of selection
+    offset = 0 # Keep track of offset from selection
+    curIdx = 0 # Current index in the text
+    
+    while occurences < n and _content_aware_check(text, selection): # While n'th occurence not found, and selection is within the text
+        idx = text.find(selection)
+        length = len(selection)
+        text = text[:idx] + text[idx + length:]
+        curIdx = idx + offset
+        offset += len(selection)
+        occurences += 1
+    
+    if occurences < n: # Double check n'th occurence was found
+        return -1
+    return curIdx
+
+def _get_occurences(text, selection):
+    """
+    Gets all occurences of selection in text
+    
+    Args:
+      text (str): The text to search
+      selection (str): The selection to search for
+    
+    Returns:
+      occurences (list): A list of indexes where selection is found
+    """
+    
+    occurences = [] # Store occurences of selection
+    offset = 0 # Keep track of offset from selection
+    
+    while _content_aware_check(text, selection): # While selection is within the text
+        idx = text.find(selection)
+        length = len(selection)
+        text = text[:idx] + text[idx + length:]
+        occurences.append(idx + offset)
+        offset += len(selection)
+    
+    return occurences
     
 def _extract(string: str):
     """
     Extracts name and arguments from a string (a line containing a function).
 
-    ### Parameters:
-    - string (str): The string of the line containing the relavent function
+    Args:
+      string (str): The string of the line containing the relavent function
 
-    ### Returns:
-    - pieces (dict): A dictionary containing the name and arguments of the function
-        - ["name"] (str): The name of the function
-        - ["args"] (list): A list of arguments for the function
-        - ["after"] (str): The string after the function
+    Returns:
+      pieces (dict): A dictionary containing the name and arguments of the function
+          ["name"] (str): The name of the function
+          ["args"] (list): A list of arguments for the function
+          ["after"] (str): The string after the function
     """
 
     pieces = {}
@@ -146,13 +200,13 @@ def _extract_comment(text: str):
     """
     Seperates the comment from the line of code and returns a tuple containing both.
 
-    ### Parameters:
-    - text (str): The line of code containing a comment
+    Args:
+      text (str): The line of code containing a comment
 
-    ### Returns:
-    - line (tuple): The two split pieces of the line:
-        - code (str): The line of code
-        - comment (str): The comment
+    Returns:
+      line (tuple): The two split pieces of the line:
+          code (str): The line of code
+          comment (str): The comment
     """
 
     comment_start = -1
@@ -173,11 +227,11 @@ def _is_num(value: str):
     """
     Checks if a given value is a valid number. (only allows characters in "-.0123456789")
 
-    ### Parameters:
-    - value (str): The value to check
+    Args:
+      value (str): The value to check
 
-    ### Returns:
-    - bool: True if the value is a valid number, False otherwise
+    Returns:
+      bool: True if the value is a valid number, False otherwise
     """
 
     if len(value) == 0:
@@ -191,14 +245,14 @@ def enforce_types(func):
     """
     A decorator that enforces type hints for function arguments and return values.
     
-    ### Parameters:
-    - func (callable): The function whose type hints should be enforced.
+    Args:
+      func (callable): The function whose type hints should be enforced.
     
-    ### Returns:
-    - callable: A wrapped function that checks argument and return types at runtime.
+    Returns:
+      callable: A wrapped function that checks argument and return types at runtime.
     
-    ### Raises:
-    - TypeError: If an argument or return value does not match its type hint.
+    Raises:
+      TypeError: If an argument or return value does not match its type hint.
     """
     
     signature = inspect.signature(func)

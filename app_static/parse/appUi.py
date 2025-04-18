@@ -11,11 +11,11 @@ def open_sb3_TW(sb3_file_path: str):
     """
     Opens up the SB3 project supplied using turbowarp editor
 
-    ### Parameters:
-    - sb3_file_path (str): The path to open
+    Args:
+      sb3_file_path (str): The path to open
 
-    ### Returns:
-    - out (subprocess.Popen): The subprocess object
+    Returns:
+      out (subprocess.Popen): The subprocess object
     """
     
     # Update path according to location of TurboWarp.exe
