@@ -4,9 +4,9 @@
 A text-based language for Scratch programming
 
 ## About
-This is the version 2 of Katnip, a completely re-written version of [the original](https://github.com/B1j2754/scratchtext/).
+This is the second version of Katnip, a completely re-written version of [the original](https://github.com/B1j2754/scratchtext/).
 
-This project aims to provide a test-based implementation of Scratch programming, to enable faster, clearer, and cleaner development of Scratch projects.
+This project aims to provide a text-based implementation of Scratch programming, to enable faster, clearer, and cleaner development of Scratch projects.
 
 ### Links:
 - VS Code syntax highlighting extension: [GitHub Repo](https://github.com/B1j2754/syntax-scratchtext)
