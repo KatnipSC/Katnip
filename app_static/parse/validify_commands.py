@@ -3,8 +3,9 @@ Code for validating the commands (ensuring proper formatting and syntax)
 """
 
 import error_handler
+import os
 
-def validify_commands():
+def validify_commands(id):
     """
     Validates the commands (ensuring proper formatting and syntax)
     
@@ -12,11 +13,14 @@ def validify_commands():
     2. Checks if useName, opCode, and type are non-empty
     3. Checks if there are duplicate commands (or parameters)
     4. Throws an error if invalid commands exist
+
+    ### Parameters:
+    - id (str): The id of the log file to write potential errors to
     """
     
     print(f"🔍 - Validating commands...")
 
-    with open("references/commands.txt", "r") as f:
+    with open(os.path.join('app_static', 'references', 'commands.txt'), "r") as f:
         commands = f.readlines() # Read file
 
         # Create list for checking duplicate commands (or parameters)
@@ -35,27 +39,27 @@ def validify_commands():
 
             # Check if command has 4 parts (useName:opCode:type:inputName1,inputName2, ...)
             if len(command_parts) < 4:
-                error_handler.add_error(f"Invalid arguments length. Expected 4 parts, but received [{len(command_parts)}]", command, line_num)
+                error_handler.add_error(f"📜❌ - Invalid arguments length. Expected 4 parts, but received [{len(command_parts)}]", command, line_num)
                 continue
 
             # Check if useName, opCode, and type are non-empty
             if command_parts[0] == "":
-                error_handler.add_error(f"Invalid useName argument. Blank argument received.", command, line_num)
+                error_handler.add_error(f"📜❌ - Invalid useName argument. Blank argument received.", command, line_num)
                 continue
             if command_parts[1] == "":
-                error_handler.add_error(f"Invalid opCode argument. Blank argument received.", command, line_num)
+                error_handler.add_error(f"📜❌ - Invalid opCode argument. Blank argument received.", command, line_num)
                 continue
             if command_parts[2] == "":
-                error_handler.add_error(f"Invalid useName argument. Blank argument received.", command, line_num)
+                error_handler.add_error(f"📜❌ - Invalid useName argument. Blank argument received.", command, line_num)
                 continue
 
             # Check if useName, opCode, and type are unique
             if command_parts[0] in all_names:
                 print(command_parts[0])
-                error_handler.add_error(f"Duplicate useName found. ", command, line_num)
+                error_handler.add_error(f"📜❌ - Duplicate useName found. ", command, line_num)
                 continue
             if command_parts[1] in all_opcodes:
-                error_handler.add_error(f"Duplicate opCode found. ", command, line_num)
+                error_handler.add_error(f"📜❌ - Duplicate opCode found. ", command, line_num)
                 continue
 
             # Add useName and opCode to list of processed commands
@@ -64,7 +68,7 @@ def validify_commands():
 
 
         # Raise exception if invalid commands exist
-        error_handler.throw_errors()
+        error_handler.throw_errors(id)
         print("✅ - All commands are valid.")
         
 # validify_commands()
