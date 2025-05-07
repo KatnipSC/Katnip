@@ -5,6 +5,7 @@
 // 4. Delete files
 // 5. Toggle folder visibility (single click name or folder icon)
 // 6. Double click on a folder name to rename it
+
 const foldersDiv = document.getElementById('folders');
 const createFolderBtn = document.getElementById('createFolderBtn');
 let folders = [];

@@ -51,18 +51,12 @@ class Tokenizer:
     
     def _tokenize_args(self, args: list):
         """
-        Tokenizes the arguments of a function into a dictionary and adds them to self.tokens.
-        
-        Args:
-          args (list): List of arguments to tokenize
+        Tokenizes the arguments of a function into tokens and adds them to self.tokens.
         """
-        
-        # Log arguments being tokenized
         self.error_handler.log(f"🔨⛓️‍💥 - Tokenizing arguments: {args}")
-        
+
+        # Operator precedence tiers (from highest to lowest, reversed below for easier parsing)
         operator_tiers = [
-            # {"!": "op.not"},  # Note: ! will be processed within identification of arguments
-            # because it only affects the right token
             {"^": "op.pow"}, 
             {"*": "op.multiply", "/": "op.divide", "%": "op.mod"},
             {"+": "op.add", "-": "op.subtract"},
@@ -70,109 +64,64 @@ class Tokenizer:
             {"==": "op.equals", "!=": "op.nequals"},
             {"&&": "op.and"},
             {"||": "op.or"}
-        ]
-        
-        operators_raw = [op for tier in operator_tiers for op in tier.keys()]
-        operators_raw_dict = {op: path for tier in operator_tiers for op, path in tier.items()}
-        operator_tiers.reverse()
-        
+        ][::-1]
+
+        operator_lookup = {op: fn for tier in operator_tiers for op, fn in tier.items()}
+
+        def _add_token(name="argument", type_=None, value=""):
+            self.tokens.append({"name": name, "type": type_, "value": value})
+
         for arg in args:
-            # Check to see if the argument is an operator
-            if arg in operators_raw:
-                self.tokens.append({
-                    "name": "function",
-                    "value": operators_raw_dict[arg]
-                })
+            if arg in operator_lookup:
+                _add_token(name="function", value=operator_lookup[arg])
                 continue
-            
-            arg_value: Union[str, dict] = ""
-            arg_type = ""
-            arg_name = "argument"
-            
-            def _add_token():
-                """Adds a token to the tokens list."""
-                self.tokens.append({
-                    "name": arg_name, 
-                    "type": arg_type,
-                    "value": arg_value
-                })
-            
-            # Handle operators and split the argument if necessary
-            was_simplified = False
+
+            # Try to simplify expression with operators
             for tier in operator_tiers:
-                instances: list[tuple[int, int]] = []  # Instances of operator found in the current tier
-                
-                for symbol, path in tier.items(): 
-                    instances.extend((idx, len(symbol)) for idx in tools._get_occurences(arg, symbol)) 
-                
-                sub_args = []
-                if instances:
-                    for index in sorted(instances, key=lambda x: x[0], reverse=True): 
-                        sub_args.append(arg[index[0] + index[1]:]) 
-                        sub_args.append(arg[index[0]:index[0] + index[1]]) 
-                        arg = arg[:index[0]] 
-                    sub_args.append(arg) 
-                
-                # Process arguments
-                if sub_args:
-                    self.error_handler.log(f"🧩🔣 - Argument operators found: '{sub_args[1]}'")
-                    self._tokenize_args(sub_args[::-1]) 
-                    was_simplified = True 
+                ops_found = [(i, op) for op in tier for i in tools._get_occurences(arg, op)]
+                if ops_found:
+                    ops_found.sort(reverse=True)  # Right-to-left for correct order
+                    sub_args = []
+                    for index, op in ops_found:
+                        sub_args.append(arg[index+len(op):])
+                        sub_args.append(op)
+                        arg = arg[:index]
+                    sub_args.append(arg)
+                    self._tokenize_args(list(reversed(sub_args)))
                     break
-            
-            if was_simplified: 
-                continue
-            
-            # Tokenize types of arguments
-            if self._is_reporter(arg):
-                func_pieces = tools._extract(arg)
-                arg_value = func_pieces["name"]
-                arg_name = "reporter"
-                _add_token()
-                
-                # Tokenize the arguments of the reporter
-                self.tokens.append({"name": "lparen", "type": None, "value": "("}) 
-                self._tokenize_args(func_pieces["args"])
-                self.tokens.append({"name": "rparen", "type": None, "value": ")"}) 
-            elif arg.startswith("(") and arg.endswith(")"):
-                grouped_arg = arg[1:-1]
-                self._tokenize_args([grouped_arg])
-            elif arg.startswith("$"):
-                arg_value = arg[1:]
-                arg_type = "variable"
-                _add_token()
-            elif arg.startswith("@l:"):
-                arg_value = arg[3:]
-                arg_type = "list"
-                _add_token()
-            elif arg.startswith("@d:"):
-                arg_value = arg[3:]
-                arg_type = "dictionary"
-                _add_token()
-            elif arg.startswith("a."):
-                arg_value = arg[2:]
-                arg_type = "functionArgument"
-                _add_token()
-            elif arg.startswith('"'):
-                arg_value = arg[1:-1]
-                arg_type = "string"
-                _add_token()
-            elif tools._is_num(arg):
-                arg_value = arg
-                arg_type = "number"
-                _add_token()
-            elif "[" in arg and "]" in arg:
-                arg_value = {"argument": arg.split("[")[0], "type": arg.split('[')[1][:-1]}
-                arg_type = "argumentDefinition"
-                _add_token()
-            elif tools._content_aware_check(arg, "="):
-                arg_value = {"kwarg": arg.split("=")[0], "value": arg.split("=")[1]}
-                arg_type = "kwarg"
-                _add_token()
             else:
-                self.error_handler.add_error("Invalid argument type", arg, self.line)
-        
-        self.error_handler.throw_errors()  # Check for and raise any found errors
+                # No operator simplification: determine argument type
+                if self._is_reporter(arg):
+                    pieces = tools._extract(arg)
+                    _add_token(name="reporter", value=pieces["name"])
+                    self.tokens.append({"name": "lparen", "type": None, "value": "("})
+                    self._tokenize_args(pieces["args"])
+                    self.tokens.append({"name": "rparen", "type": None, "value": ")"})
+                elif arg.startswith("(") and arg.endswith(")"):
+                    self._tokenize_args([arg[1:-1]])
+                elif arg.startswith("$"):
+                    _add_token(type_="variable", value=arg[1:])
+                elif arg.startswith("@l:"):
+                    _add_token(type_="list", value=arg[3:])
+                elif arg.startswith("@d:"):
+                    _add_token(type_="dictionary", value=arg[3:])
+                elif arg.startswith("a."):
+                    _add_token(type_="functionArgument", value=arg[2:])
+                elif arg.startswith('"') and arg.endswith('"'):
+                    _add_token(type_="string", value=arg[1:-1])
+                elif tools._is_num(arg):
+                    _add_token(type_="number", value=arg)
+                elif "[" in arg and "]" in arg:
+                    base, t = arg.split("[", 1)
+                    _add_token(type_="argumentDefinition", value={"argument": base, "type": t.rstrip("]")})
+                elif tools._content_aware_check(arg, "="):
+                    key, val = arg.split("=", 1)
+                    _add_token(type_="kwarg", value={"kwarg": key, "value": val})
+                else:
+                    self.error_handler.add_error("Invalid argument type", arg, self.line)
+
+        self.error_handler.throw_errors()
+
     
     @tools.enforce_types
     def _identify_function(self, name: str) -> dict | None:
